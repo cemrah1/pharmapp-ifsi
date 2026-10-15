@@ -504,6 +504,216 @@ body {
 }
 .no-results-icon { font-size: 3rem; margin-bottom: 12px; }
 .no-results h3 { font-size: 1.1rem; margin-bottom: 6px; color: var(--text); }
+
+/* QUIZ */
+.quiz-btn {
+  background: var(--accent);
+  border: none;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+.quiz-btn:hover { background: var(--accent-hover); }
+.quiz-modal { max-width: 680px; }
+.quiz-setup-body { padding: 20px; }
+.quiz-setup-section { margin-bottom: 20px; }
+.quiz-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.quiz-select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.quiz-num-btns { display: flex; gap: 8px; }
+.quiz-num-btn {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.quiz-num-btn.active,
+.quiz-num-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+}
+.quiz-types { display: flex; flex-wrap: wrap; gap: 8px; }
+.quiz-type-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background: var(--bg);
+  color: var(--text);
+}
+.quiz-type-check input { cursor: pointer; }
+.quiz-start-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 10px;
+}
+.quiz-start-btn:hover { background: var(--accent-hover); }
+.quiz-progress-bar {
+  height: 6px;
+  background: var(--bg-search);
+  border-radius: 3px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+.quiz-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+.quiz-question-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  text-align: left;
+  line-height: 1.4;
+}
+.quiz-option:hover:not(.quiz-option-disabled) {
+  border-color: var(--accent);
+  background: var(--info-bg);
+}
+.quiz-option-correct {
+  border-color: var(--success-text) !important;
+  background: var(--success-bg) !important;
+  color: var(--success-text) !important;
+  font-weight: 600;
+}
+.quiz-option-wrong {
+  border-color: var(--danger-text) !important;
+  background: var(--danger-bg) !important;
+  color: var(--danger-text) !important;
+}
+.quiz-option-disabled { cursor: default; opacity: 0.7; }
+.quiz-feedback {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.quiz-feedback-correct {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-text);
+}
+.quiz-feedback-wrong {
+  background: var(--danger-bg);
+  color: var(--danger-text);
+  border: 1px solid var(--danger-text);
+}
+.quiz-next-btn {
+  margin-top: 16px;
+  padding: 12px 20px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+.quiz-next-btn:hover { background: var(--accent-hover); }
+.quiz-results-body { text-align: center; padding: 30px 20px; }
+.quiz-score-circle {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  border: 6px solid var(--border);
+}
+.quiz-score-circle.score-good { border-color: var(--success-text); }
+.quiz-score-circle.score-mid { border-color: var(--warning-text); }
+.quiz-score-circle.score-low { border-color: var(--danger-text); }
+.quiz-score-num { font-size: 2rem; font-weight: 700; }
+.quiz-score-label { font-size: 0.85rem; color: var(--text-light); }
+.quiz-score-detail {
+  font-size: 1rem;
+  margin-bottom: 24px;
+  color: var(--text);
+}
+.quiz-review {
+  text-align: left;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+.quiz-review-item {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.quiz-review-correct { background: var(--success-bg); color: var(--success-text); }
+.quiz-review-wrong { background: var(--danger-bg); color: var(--danger-text); }
+.quiz-review-q { font-weight: 600; margin-bottom: 4px; }
+.quiz-review-a { font-size: 0.8rem; }
+.quiz-results-btns { display: flex; gap: 10px; }
+.quiz-close-btn {
+  flex: 1;
+  padding: 14px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -518,6 +728,7 @@ body {
   </div>
   <div class="header-right">
     <span class="stats-badge" id="statsTotal"></span>
+    <button class="quiz-btn" onclick="openQuiz()" title="Quiz de revision">Quiz</button>
     <button class="theme-toggle" onclick="toggleTheme()" title="Changer le theme">Clair/Sombre</button>
   </div>
 </header>
@@ -560,6 +771,81 @@ body {
 <!-- DETAIL MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
   <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- QUIZ MODAL -->
+<div class="modal-overlay" id="quizOverlay" onclick="closeQuizOutside(event)">
+  <div class="modal quiz-modal" id="quizContent">
+    <!-- Quiz Setup -->
+    <div id="quizSetup">
+      <div class="modal-header">
+        <div><h2>Quiz de revision</h2><div class="modal-header-sub">Testez vos connaissances en pharmacologie</div></div>
+        <button class="modal-close" onclick="closeQuiz()">&times;</button>
+      </div>
+      <div class="modal-body quiz-setup-body">
+        <div class="quiz-setup-section">
+          <label class="quiz-label">Theme</label>
+          <select id="quizThemeSelect" class="quiz-select">
+            <option value="all">Tous les themes (aleatoire)</option>
+          </select>
+        </div>
+        <div class="quiz-setup-section">
+          <label class="quiz-label">Nombre de questions</label>
+          <div class="quiz-num-btns">
+            <button class="quiz-num-btn active" data-n="5">5</button>
+            <button class="quiz-num-btn" data-n="10">10</button>
+            <button class="quiz-num-btn" data-n="15">15</button>
+            <button class="quiz-num-btn" data-n="20">20</button>
+          </div>
+        </div>
+        <div class="quiz-setup-section">
+          <label class="quiz-label">Types de questions</label>
+          <div class="quiz-types">
+            <label class="quiz-type-check"><input type="checkbox" value="classe" checked> Classe therapeutique</label>
+            <label class="quiz-type-check"><input type="checkbox" value="indication" checked> Indications</label>
+            <label class="quiz-type-check"><input type="checkbox" value="ei_grave" checked> Effets indesirables graves</label>
+            <label class="quiz-type-check"><input type="checkbox" value="ci" checked> Contre-indications</label>
+            <label class="quiz-type-check"><input type="checkbox" value="antidote" checked> Antidotes</label>
+            <label class="quiz-type-check"><input type="checkbox" value="surveillance" checked> Surveillance IDE</label>
+          </div>
+        </div>
+        <button class="quiz-start-btn" onclick="startQuiz()">Commencer le quiz</button>
+      </div>
+    </div>
+    <!-- Quiz Question -->
+    <div id="quizQuestion" style="display:none;">
+      <div class="modal-header">
+        <div><h2 id="quizProgress">Question 1/10</h2><div class="modal-header-sub" id="quizThemeLabel"></div></div>
+        <button class="modal-close" onclick="closeQuiz()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quizProgressBar"></div></div>
+        <div class="quiz-question-text" id="quizQuestionText"></div>
+        <div class="quiz-options" id="quizOptions"></div>
+        <div class="quiz-feedback" id="quizFeedback" style="display:none;"></div>
+        <button class="quiz-next-btn" id="quizNextBtn" style="display:none;" onclick="nextQuestion()">Question suivante</button>
+      </div>
+    </div>
+    <!-- Quiz Results -->
+    <div id="quizResults" style="display:none;">
+      <div class="modal-header">
+        <div><h2>Resultats du quiz</h2></div>
+        <button class="modal-close" onclick="closeQuiz()">&times;</button>
+      </div>
+      <div class="modal-body quiz-results-body">
+        <div class="quiz-score-circle" id="quizScoreCircle">
+          <div class="quiz-score-num" id="quizScoreNum">0%</div>
+          <div class="quiz-score-label">Score</div>
+        </div>
+        <div class="quiz-score-detail" id="quizScoreDetail"></div>
+        <div class="quiz-review" id="quizReview"></div>
+        <div class="quiz-results-btns">
+          <button class="quiz-start-btn" onclick="resetQuiz()">Nouveau quiz</button>
+          <button class="quiz-close-btn" onclick="closeQuiz()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -817,6 +1103,400 @@ try {
   const saved = localStorage.getItem('pharmapp-theme');
   if (saved) document.documentElement.setAttribute('data-theme', saved);
 } catch(e) {}
+
+// ============ QUIZ MODULE ============
+let quizQuestions = [];
+let quizCurrentIdx = 0;
+let quizScore = 0;
+let quizAnswers = [];
+let quizNumQ = 5;
+
+// Quiz setup: number buttons
+document.querySelectorAll('.quiz-num-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.quiz-num-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    quizNumQ = parseInt(this.dataset.n);
+  });
+});
+
+function openQuiz() {
+  // Populate theme select
+  const sel = document.getElementById('quizThemeSelect');
+  sel.innerHTML = '<option value="all">Tous les themes (aleatoire)</option>';
+  if (DB && DB.themes) {
+    DB.themes.forEach(t => {
+      if (t.medicaments.length >= 2) {
+        sel.innerHTML += '<option value="' + t.id + '">' + t.nom + ' (' + t.medicaments.length + ')</option>';
+      }
+    });
+  }
+  document.getElementById('quizSetup').style.display = '';
+  document.getElementById('quizQuestion').style.display = 'none';
+  document.getElementById('quizResults').style.display = 'none';
+  document.getElementById('quizOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeQuiz() {
+  document.getElementById('quizOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeQuizOutside(e) {
+  if (e.target === document.getElementById('quizOverlay')) closeQuiz();
+}
+
+function resetQuiz() {
+  document.getElementById('quizSetup').style.display = '';
+  document.getElementById('quizQuestion').style.display = 'none';
+  document.getElementById('quizResults').style.display = 'none';
+}
+
+function shuffleArray(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickRandom(arr, n) {
+  return shuffleArray(arr).slice(0, n);
+}
+
+function generateQuestions(pool, types, count) {
+  const generators = [];
+
+  // Classe therapeutique: Quel est la classe de X ?
+  if (types.includes('classe')) {
+    generators.push(function(med, allPool) {
+      const correctAnswer = med.classe_therapeutique;
+      if (!correctAnswer) return null;
+      const wrongs = allPool
+        .filter(m => m.classe_therapeutique && m.classe_therapeutique !== correctAnswer)
+        .map(m => m.classe_therapeutique);
+      const uniqueWrongs = [...new Set(wrongs)];
+      if (uniqueWrongs.length < 3) return null;
+      const distractors = pickRandom(uniqueWrongs, 3);
+      return {
+        question: 'Quelle est la classe therapeutique de ' + med.DCI + ' ?',
+        correct: correctAnswer,
+        options: shuffleArray([correctAnswer, ...distractors]),
+        explanation: med.DCI + ' appartient a la classe : ' + correctAnswer + '.',
+        med: med.DCI,
+        theme: med.theme_nom
+      };
+    });
+  }
+
+  // Indication: Pour quelle indication utilise-t-on X ?
+  if (types.includes('indication')) {
+    generators.push(function(med, allPool) {
+      if (!Array.isArray(med.indications) || med.indications.length === 0) return null;
+      const correctAnswer = med.indications[0];
+      const allIndications = [];
+      allPool.forEach(m => {
+        if (Array.isArray(m.indications)) {
+          m.indications.forEach(ind => {
+            if (ind !== correctAnswer && !med.indications.includes(ind)) allIndications.push(ind);
+          });
+        }
+      });
+      const uniqueWrongs = [...new Set(allIndications)];
+      if (uniqueWrongs.length < 3) return null;
+      const distractors = pickRandom(uniqueWrongs, 3);
+      return {
+        question: 'Quelle est une indication de ' + med.DCI + ' ?',
+        correct: correctAnswer,
+        options: shuffleArray([correctAnswer, ...distractors]),
+        explanation: 'Les indications de ' + med.DCI + ' incluent : ' + med.indications.join(', ') + '.',
+        med: med.DCI,
+        theme: med.theme_nom
+      };
+    });
+  }
+
+  // Effet indesirable grave
+  if (types.includes('ei_grave')) {
+    generators.push(function(med, allPool) {
+      if (!Array.isArray(med.effets_indesirables_graves) || med.effets_indesirables_graves.length === 0) return null;
+      const correctAnswer = med.effets_indesirables_graves[0];
+      const allEI = [];
+      allPool.forEach(m => {
+        if (Array.isArray(m.effets_indesirables_graves)) {
+          m.effets_indesirables_graves.forEach(ei => {
+            if (ei !== correctAnswer && !med.effets_indesirables_graves.includes(ei)) allEI.push(ei);
+          });
+        }
+      });
+      const uniqueWrongs = [...new Set(allEI)];
+      if (uniqueWrongs.length < 3) return null;
+      const distractors = pickRandom(uniqueWrongs, 3);
+      return {
+        question: 'Quel est un effet indesirable grave de ' + med.DCI + ' ?',
+        correct: correctAnswer,
+        options: shuffleArray([correctAnswer, ...distractors]),
+        explanation: 'Les effets indesirables graves de ' + med.DCI + ' incluent : ' + med.effets_indesirables_graves.join(', ') + '.',
+        med: med.DCI,
+        theme: med.theme_nom
+      };
+    });
+  }
+
+  // Contre-indication
+  if (types.includes('ci')) {
+    generators.push(function(med, allPool) {
+      if (!Array.isArray(med.contre_indications) || med.contre_indications.length === 0) return null;
+      const correctAnswer = med.contre_indications[0];
+      const allCI = [];
+      allPool.forEach(m => {
+        if (Array.isArray(m.contre_indications)) {
+          m.contre_indications.forEach(ci => {
+            if (ci !== correctAnswer && !med.contre_indications.includes(ci)) allCI.push(ci);
+          });
+        }
+      });
+      const uniqueWrongs = [...new Set(allCI)];
+      if (uniqueWrongs.length < 3) return null;
+      const distractors = pickRandom(uniqueWrongs, 3);
+      return {
+        question: 'Quelle est une contre-indication de ' + med.DCI + ' ?',
+        correct: correctAnswer,
+        options: shuffleArray([correctAnswer, ...distractors]),
+        explanation: 'Les contre-indications de ' + med.DCI + ' incluent : ' + med.contre_indications.join(', ') + '.',
+        med: med.DCI,
+        theme: med.theme_nom
+      };
+    });
+  }
+
+  // Antidote
+  if (types.includes('antidote')) {
+    generators.push(function(med, allPool) {
+      if (!med.antidote) return null;
+      const correctAnswer = med.antidote;
+      const allAntidotes = allPool
+        .filter(m => m.antidote && m.antidote !== correctAnswer)
+        .map(m => m.antidote);
+      const uniqueWrongs = [...new Set(allAntidotes)];
+      if (uniqueWrongs.length < 3) return null;
+      const distractors = pickRandom(uniqueWrongs, 3);
+      return {
+        question: 'Quel est l\'antidote de ' + med.DCI + ' ?',
+        correct: correctAnswer,
+        options: shuffleArray([correctAnswer, ...distractors]),
+        explanation: 'L\'antidote de ' + med.DCI + ' est : ' + correctAnswer + '.',
+        med: med.DCI,
+        theme: med.theme_nom
+      };
+    });
+  }
+
+  // Surveillance IDE
+  if (types.includes('surveillance')) {
+    generators.push(function(med, allPool) {
+      if (!Array.isArray(med.surveillance_IDE) || med.surveillance_IDE.length === 0) return null;
+      const correctAnswer = med.surveillance_IDE[0];
+      const allSurv = [];
+      allPool.forEach(m => {
+        if (Array.isArray(m.surveillance_IDE)) {
+          m.surveillance_IDE.forEach(s => {
+            if (s !== correctAnswer && !med.surveillance_IDE.includes(s)) allSurv.push(s);
+          });
+        }
+      });
+      const uniqueWrongs = [...new Set(allSurv)];
+      if (uniqueWrongs.length < 3) return null;
+      const distractors = pickRandom(uniqueWrongs, 3);
+      return {
+        question: 'Quel element de surveillance IDE est specifique a ' + med.DCI + ' ?',
+        correct: correctAnswer,
+        options: shuffleArray([correctAnswer, ...distractors]),
+        explanation: 'La surveillance IDE de ' + med.DCI + ' comprend : ' + med.surveillance_IDE.join(', ') + '.',
+        med: med.DCI,
+        theme: med.theme_nom
+      };
+    });
+  }
+
+  if (generators.length === 0) return [];
+
+  const questions = [];
+  const usedKeys = new Set();
+  const shuffledPool = shuffleArray(pool);
+  let attempts = 0;
+  const maxAttempts = count * 10;
+
+  while (questions.length < count && attempts < maxAttempts) {
+    attempts++;
+    const med = shuffledPool[attempts % shuffledPool.length];
+    const gen = generators[Math.floor(Math.random() * generators.length)];
+    const q = gen(med, pool);
+    if (q) {
+      const key = q.question;
+      if (!usedKeys.has(key)) {
+        usedKeys.add(key);
+        questions.push(q);
+      }
+    }
+  }
+
+  return shuffleArray(questions);
+}
+
+function startQuiz() {
+  const themeVal = document.getElementById('quizThemeSelect').value;
+  const typeChecks = document.querySelectorAll('.quiz-types input:checked');
+  const types = Array.from(typeChecks).map(c => c.value);
+
+  if (types.length === 0) {
+    alert('Selectionnez au moins un type de question.');
+    return;
+  }
+
+  let pool;
+  if (themeVal === 'all') {
+    pool = allMeds;
+  } else {
+    pool = allMeds.filter(m => m.theme_id === parseInt(themeVal));
+  }
+
+  if (pool.length < 2) {
+    alert('Pas assez de medicaments pour generer un quiz.');
+    return;
+  }
+
+  quizQuestions = generateQuestions(pool, types, quizNumQ);
+
+  if (quizQuestions.length === 0) {
+    alert('Impossible de generer des questions avec ces parametres. Essayez d\'autres types.');
+    return;
+  }
+
+  quizCurrentIdx = 0;
+  quizScore = 0;
+  quizAnswers = [];
+
+  document.getElementById('quizSetup').style.display = 'none';
+  document.getElementById('quizQuestion').style.display = '';
+  document.getElementById('quizResults').style.display = 'none';
+
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = quizQuestions[quizCurrentIdx];
+  const total = quizQuestions.length;
+
+  document.getElementById('quizProgress').textContent = 'Question ' + (quizCurrentIdx + 1) + '/' + total;
+  document.getElementById('quizThemeLabel').textContent = q.theme;
+  document.getElementById('quizProgressBar').style.width = ((quizCurrentIdx / total) * 100) + '%';
+  document.getElementById('quizQuestionText').textContent = q.question;
+  document.getElementById('quizFeedback').style.display = 'none';
+  document.getElementById('quizNextBtn').style.display = 'none';
+
+  const optContainer = document.getElementById('quizOptions');
+  let html = '';
+  q.options.forEach((opt, i) => {
+    html += '<button class="quiz-option" data-idx="' + i + '" onclick="selectAnswer(this, ' + i + ')">' + escH(opt) + '</button>';
+  });
+  optContainer.innerHTML = html;
+}
+
+function selectAnswer(btn, idx) {
+  const q = quizQuestions[quizCurrentIdx];
+  const selected = q.options[idx];
+  const isCorrect = selected === q.correct;
+
+  // Disable all options
+  document.querySelectorAll('.quiz-option').forEach(b => {
+    b.classList.add('quiz-option-disabled');
+    b.onclick = null;
+    if (b.textContent === q.correct) {
+      b.classList.add('quiz-option-correct');
+    }
+  });
+
+  if (isCorrect) {
+    quizScore++;
+    btn.classList.add('quiz-option-correct');
+  } else {
+    btn.classList.add('quiz-option-wrong');
+  }
+
+  quizAnswers.push({
+    question: q.question,
+    selected: selected,
+    correct: q.correct,
+    isCorrect: isCorrect,
+    explanation: q.explanation,
+    med: q.med
+  });
+
+  // Show feedback
+  const fb = document.getElementById('quizFeedback');
+  fb.style.display = 'block';
+  fb.className = 'quiz-feedback ' + (isCorrect ? 'quiz-feedback-correct' : 'quiz-feedback-wrong');
+  fb.innerHTML = (isCorrect ? '<strong>Bonne reponse !</strong> ' : '<strong>Mauvaise reponse.</strong> ') + escH(q.explanation);
+
+  // Show next button
+  const nextBtn = document.getElementById('quizNextBtn');
+  nextBtn.style.display = 'block';
+  if (quizCurrentIdx === quizQuestions.length - 1) {
+    nextBtn.textContent = 'Voir les resultats';
+  } else {
+    nextBtn.textContent = 'Question suivante';
+  }
+}
+
+function nextQuestion() {
+  quizCurrentIdx++;
+  if (quizCurrentIdx >= quizQuestions.length) {
+    showResults();
+  } else {
+    showQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quizQuestion').style.display = 'none';
+  document.getElementById('quizResults').style.display = '';
+
+  const total = quizQuestions.length;
+  const pct = Math.round((quizScore / total) * 100);
+
+  document.getElementById('quizScoreNum').textContent = pct + '%';
+
+  const circle = document.getElementById('quizScoreCircle');
+  circle.className = 'quiz-score-circle';
+  if (pct >= 70) circle.classList.add('score-good');
+  else if (pct >= 40) circle.classList.add('score-mid');
+  else circle.classList.add('score-low');
+
+  let msg = '';
+  if (pct === 100) msg = 'Parfait ! Maitrise excellente.';
+  else if (pct >= 80) msg = 'Tres bien ! Bonnes connaissances.';
+  else if (pct >= 60) msg = 'Correct. Quelques points a revoir.';
+  else if (pct >= 40) msg = 'A ameliorer. Revoyez les fiches.';
+  else msg = 'Insuffisant. Reprenez les cours correspondants.';
+
+  document.getElementById('quizScoreDetail').innerHTML = '<strong>' + quizScore + '/' + total + '</strong> bonnes reponses<br>' + msg;
+
+  // Review
+  let reviewHTML = '';
+  quizAnswers.forEach((a, i) => {
+    const cls = a.isCorrect ? 'quiz-review-correct' : 'quiz-review-wrong';
+    reviewHTML += '<div class="quiz-review-item ' + cls + '">';
+    reviewHTML += '<div class="quiz-review-q">' + (i + 1) + '. ' + escH(a.question) + '</div>';
+    if (!a.isCorrect) {
+      reviewHTML += '<div class="quiz-review-a">Votre reponse : ' + escH(a.selected) + '</div>';
+      reviewHTML += '<div class="quiz-review-a">Reponse correcte : ' + escH(a.correct) + '</div>';
+    }
+    reviewHTML += '</div>';
+  });
+  document.getElementById('quizReview').innerHTML = reviewHTML;
+}
 
 // Init
 loadData();
