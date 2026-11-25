@@ -77,20 +77,25 @@ body {
   background: var(--card);
   border-bottom: 2px solid var(--border);
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
   position: sticky;
   top: 82px;
   z-index: 99;
+  gap: 2px;
+  padding: 4px 4px 0;
 }
+.tabs::-webkit-scrollbar { display: none; }
 .tab {
-  flex: 1;
-  min-width: 70px;
-  padding: 10px 4px;
+  flex: 0 0 auto;
+  padding: 8px 14px;
   text-align: center;
   cursor: pointer;
-  font-size: 0.7em;
+  font-size: 0.82em;
   font-weight: 600;
   color: var(--text-light);
   border-bottom: 3px solid transparent;
+  border-radius: 8px 8px 0 0;
   transition: all 0.2s;
   white-space: nowrap;
 }
@@ -388,7 +393,7 @@ select, input[type="text"], input[type="number"] {
 @media (max-width: 600px) {
   .med-table { font-size: 0.7em; }
   .med-table th, .med-table td { padding: 4px 3px; }
-  .tab { font-size: 0.6em; padding: 8px 3px; min-width: 55px; }
+  .tab { font-size: 0.78em; padding: 8px 12px; }
 }
 </style>
 </head>
@@ -734,8 +739,10 @@ function toggleDark() {
     document.documentElement.getAttribute('data-theme') === 'dark' ? '' : 'dark');
 }
 function showTab(i) {
-  document.querySelectorAll('.tab').forEach((t,j) => t.classList.toggle('active', j===i));
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach((t,j) => t.classList.toggle('active', j===i));
   document.querySelectorAll('.section').forEach((s,j) => s.classList.toggle('active', j===i));
+  if(tabs[i]) tabs[i].scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
 }
 function pick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
 function rand(a,b) { return Math.floor(Math.random()*(b-a+1))+a; }
