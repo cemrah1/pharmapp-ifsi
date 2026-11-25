@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PharmApp IFSI - Pharmacologie S3</title>
+<style>
+:root {
+  --primary: #1F4E79;
+  --primary-light: #D6E4F0;
+  --primary-dark: #163A5C;
+  --accent: #2E86C1;
+  --bg: #F5F7FA;
+  --card: #FFFFFF;
+  --text: #1A1A1A;
+  --text-light: #555;
+  --border: #DDE3EA;
+  --success: #27AE60;
+  --danger: #E74C3C;
+  --warn: #F39C12;
+  --warn-bg: #FFF8E1;
+  --danger-bg: #FDEDEC;
+  --success-bg: #EAFAF1;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius: 10px;
+}
+[data-theme="dark"] {
+  --primary: #3A7CBD;
+  --primary-light: #1E3A5F;
+  --primary-dark: #2C6AA0;
+  --bg: #121820;
+  --card: #1A2332;
+  --text: #E0E6ED;
+  --text-light: #8899AA;
+  --border: #2A3A4A;
+  --shadow: 0 2px 8px rgba(0,0,0,0.3);
+  --warn-bg: #2A2518;
+  --danger-bg: #2A1818;
+  --success-bg: #182A1E;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  padding-bottom: 80px;
+}
+.header {
+  background: var(--primary);
+  color: #fff;
+  padding: 16px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header h1 { font-size: 1.3em; margin-bottom: 2px; }
+.header p { font-size: 0.75em; opacity: 0.85; }
+.header-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+.header-controls button {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.8em;
+}
+.tabs {
+  display: flex;
+  background: var(--card);
+  border-bottom: 2px solid var(--border);
+  overflow-x: auto;
+  position: sticky;
+  top: 82px;
+  z-index: 99;
+}
+.tab {
+  flex: 1;
+  min-width: 70px;
+  padding: 10px 4px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.7em;
+  font-weight: 600;
+  color: var(--text-light);
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background: var(--primary-light);
+}
+.section { display: none; padding: 16px; max-width: 900px; margin: 0 auto; }
+.section.active { display: block; }
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+.card h3 {
+  color: var(--primary);
+  margin-bottom: 10px;
+  font-size: 1.05em;
+}
+select, input[type="text"], input[type="number"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95em;
+  background: var(--card);
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+.btn-block { display: block; width: 100%; text-align: center; }
+.btn-sm { padding: 8px 16px; font-size: 0.85em; }
+.controls-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.controls-row select { flex: 1; min-width: 120px; }
+.exercise-box {
+  background: var(--primary-light);
+  border-left: 4px solid var(--primary);
+  padding: 16px;
+  border-radius: 0 8px 8px 0;
+  margin: 12px 0;
+}
+.exercise-box .scenario { font-style: italic; margin-bottom: 10px; color: var(--text-light); }
+.exercise-box .question { font-weight: 700; font-size: 1.05em; }
+.exercise-box .data { margin-top: 8px; }
+.exercise-box .data span {
+  display: inline-block;
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  margin: 3px 4px 3px 0;
+}
+.correction {
+  display: none;
+  background: var(--success-bg);
+  border-left: 4px solid var(--success);
+  padding: 16px;
+  border-radius: 0 8px 8px 0;
+  margin-top: 12px;
+}
+.correction.visible { display: block; }
+.correction h4 { color: var(--success); margin-bottom: 8px; }
+.correction .formula-display {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  margin: 8px 0;
+  font-size: 0.95em;
+}
+.correction .step { margin: 4px 0; padding-left: 16px; }
+.correction .final {
+  font-weight: 700;
+  font-size: 1.1em;
+  color: var(--primary);
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--primary-light);
+  border-radius: 8px;
+}
+.correction .tip {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--warn-bg);
+  border-radius: 8px;
+  font-size: 0.85em;
+  color: var(--warn);
+}
+.counter {
+  text-align: center;
+  padding: 8px;
+  font-size: 0.85em;
+  color: var(--text-light);
+}
+.med-table { width: 100%; border-collapse: collapse; font-size: 0.8em; }
+.med-table th {
+  background: var(--primary);
+  color: #fff;
+  padding: 8px 6px;
+  text-align: left;
+  position: sticky;
+  top: 130px;
+  font-size: 0.85em;
+}
+.med-table td {
+  padding: 6px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.med-table tr:hover td { background: var(--primary-light); }
+.med-table .dci { font-weight: 700; }
+.filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.pill {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  cursor: pointer;
+  font-size: 0.8em;
+  color: var(--text);
+}
+.pill.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.anti-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+.anti-table th {
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 8px;
+  text-align: left;
+}
+.anti-table td {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.anti-table tr:nth-child(even) td { background: var(--primary-light); }
+.anti-table .antidote-name { font-weight: 700; color: var(--danger); }
+.formula-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.formula-card h4 { color: var(--primary); margin-bottom: 6px; }
+.formula-card .formula-expr {
+  background: var(--primary-light);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95em;
+  margin: 6px 0;
+  font-weight: 600;
+}
+.formula-card .example { font-size: 0.85em; color: var(--text-light); margin-top: 6px; }
+.formula-card .piege {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: var(--warn-bg);
+  border-radius: 6px;
+  font-size: 0.82em;
+}
+.quiz-question {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+}
+.quiz-question h4 { margin-bottom: 10px; }
+.quiz-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  margin: 6px 0;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  cursor: pointer;
+  font-size: 0.9em;
+  color: var(--text);
+  transition: all 0.2s;
+}
+.quiz-option:hover { border-color: var(--primary); background: var(--primary-light); }
+.quiz-option.correct { border-color: var(--success); background: var(--success-bg); }
+.quiz-option.wrong { border-color: var(--danger); background: var(--danger-bg); }
+.quiz-option.disabled { pointer-events: none; opacity: 0.7; }
+.quiz-explanation {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--success-bg);
+  border-radius: 8px;
+  font-size: 0.85em;
+  display: none;
+}
+.quiz-score {
+  text-align: center;
+  padding: 30px;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.quiz-score .score-num { font-size: 3em; font-weight: 700; color: var(--primary); }
+.progress-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  margin-bottom: 16px;
+}
+.progress-bar .fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+.method-box {
+  background: var(--primary-light);
+  border: 1px solid var(--border);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  margin: 10px 0;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+.method-num {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.85em;
+  margin-right: 8px;
+}
+.red-flag-table { width: 100%; border-collapse: collapse; font-size: 0.85em; margin: 10px 0; }
+.red-flag-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.red-flag-table td:first-child { font-weight: 700; white-space: nowrap; }
+.red-flag-table tr:nth-child(even) td { background: var(--danger-bg); }
+.footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.75em;
+  color: var(--text-light);
+  border-top: 1px solid var(--border);
+  margin-top: 30px;
+}
+@media print {
+  .header, .tabs, .footer, .btn, .controls-row, .filter-pills, input, select { display: none !important; }
+  .section { display: block !important; padding: 0; }
+  .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+}
+@media (max-width: 600px) {
+  .med-table { font-size: 0.7em; }
+  .med-table th, .med-table td { padding: 4px 3px; }
+  .tab { font-size: 0.6em; padding: 8px 3px; min-width: 55px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>PharmApp IFSI</h1>
+  <p>UE 2.11 S3 - Pharmacologie et therapeutiques | IFSI Grenoble - Promotion 2025-2028</p>
+  <div class="header-controls">
+    <button onclick="toggleDark()">Mode sombre</button>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" onclick="showTab(0)">Calculs</div>
+  <div class="tab" onclick="showTab(1)">Medicaments</div>
+  <div class="tab" onclick="showTab(2)">Antidotes</div>
+  <div class="tab" onclick="showTab(3)">Formules</div>
+  <div class="tab" onclick="showTab(4)">Quiz Pharmaco</div>
+  <div class="tab" onclick="showTab(5)">Quiz Calculs</div>
+  <div class="tab" onclick="showTab(6)">Gerontopsy</div>
+  <div class="tab" onclick="showTab(7)">Methodes</div>
+</div>
+
+<!-- ====== TAB 0: GENERATEUR CALCULS DE DOSES ====== -->
+<div class="section active" id="sec0">
+  <div class="card">
+    <h3>Generateur d'enonces - Calculs de doses</h3>
+    <div class="controls-row">
+      <select id="calcCat">
+        <option value="all">Toutes les formules</option>
+        <option value="gouttes">Debit gouttes/min</option>
+        <option value="mlh">Debit mL/h</option>
+        <option value="dosepoids">Dose/poids</option>
+        <option value="dilution">Dilution/Reconstitution</option>
+        <option value="pse">PSE</option>
+        <option value="conversion">Conversions</option>
+        <option value="duree">Duree de perfusion</option>
+        <option value="regle3">Regle de trois</option>
+        <option value="imc">IMC</option>
+      </select>
+      <select id="calcDiff">
+        <option value="all">Toute difficulte</option>
+        <option value="facile">Facile</option>
+        <option value="moyen">Moyen</option>
+        <option value="difficile">Difficile</option>
+      </select>
+    </div>
+    <div class="controls-row">
+      <select id="calcType">
+        <option value="formatif">Formatif (apprentissage)</option>
+        <option value="examen">Examen (formel)</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="generateExercise()">Nouvel enonce</button>
+  </div>
+  <div id="exerciseArea"></div>
+  <div class="counter" id="calcCounter">Exercices generes : 0</div>
+</div>
+
+<!-- ====== TAB 1: FICHES MEDICAMENTS ====== -->
+<div class="section" id="sec1">
+  <div class="card">
+    <h3>Fiches medicamenteuses</h3>
+    <input type="text" id="medSearch" placeholder="Rechercher un medicament, une classe, une indication..." oninput="filterMeds()">
+    <div class="filter-pills" id="medFilters"></div>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="med-table" id="medTable">
+      <thead>
+        <tr>
+          <th>DCI</th><th>Commercial</th><th>Classe</th><th>Indication</th><th>Voie</th><th>EI</th><th>CI</th><th>Surveillance IDE</th><th>Antidote</th>
+        </tr>
+      </thead>
+      <tbody id="medBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====== TAB 2: ANTIDOTES ====== -->
+<div class="section" id="sec2">
+  <div class="card">
+    <h3>Antidotes a connaitre</h3>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="anti-table" id="antiTable">
+      <thead>
+        <tr><th>Medicament / Toxique</th><th>Antidote</th><th>Nom commercial</th><th>Voie</th><th>Delai</th><th>Remarques IDE</th></tr>
+      </thead>
+      <tbody id="antiBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====== TAB 3: FORMULES ====== -->
+<div class="section" id="sec3">
+  <div class="card"><h3>Toutes les formules de calculs de doses</h3></div>
+  <div id="formulasArea"></div>
+</div>
+
+<!-- ====== TAB 4: QUIZ PHARMACO ====== -->
+<div class="section" id="sec4">
+  <div class="card">
+    <h3>Quiz Pharmacologie - 10 questions</h3>
+    <p style="color:var(--text-light);font-size:0.9em;margin-bottom:12px;">Questions sur les classes, EI, CI, surveillance, antidotes, gerontopsychiatrie</p>
+    <button class="btn btn-primary btn-block" onclick="startQuizPharmaco()">Lancer le quiz pharmaco</button>
+  </div>
+  <div id="quizPharmacoArea"></div>
+</div>
+
+<!-- ====== TAB 5: QUIZ CALCULS ====== -->
+<div class="section" id="sec5">
+  <div class="card">
+    <h3>Quiz Calculs de doses - 10 questions</h3>
+    <p style="color:var(--text-light);font-size:0.9em;margin-bottom:12px;">Scenarios cliniques avec calculs : debits, dilutions, doses/poids, conversions, PSE</p>
+    <button class="btn btn-primary btn-block" onclick="startQuizCalc()">Lancer le quiz calculs</button>
+  </div>
+  <div id="quizCalcArea"></div>
+</div>
+
+<!-- ====== TAB 6: GERONTOPSYCHIATRIE ====== -->
+<div class="section" id="sec6">
+  <div class="card">
+    <h3>Gerontopsychiatrie - Pharmacologie de la personne agee</h3>
+    <p style="color:var(--text-light);font-size:0.9em;">Particularites et regles de prescription chez le sujet age</p>
+  </div>
+
+  <div class="card">
+    <h3>Particularites pharmacologiques de la PA</h3>
+    <table class="anti-table">
+      <tr><td style="font-weight:700;width:40%">Diminution fonction renale (DFG)</td><td>Adapter les doses des medicaments a elimination renale. Calculer le DFG (Cockroft ou CKD-EPI).</td></tr>
+      <tr><td style="font-weight:700">Diminution metabolisme hepatique</td><td>Demi-vies allongees -> risque d'accumulation. Privilegier les molecules a metabolisme simple.</td></tr>
+      <tr><td style="font-weight:700">Augmentation masse grasse</td><td>Accumulation des medicaments liposolubles (BZD longue duree). Effet prolonge.</td></tr>
+      <tr><td style="font-weight:700">Diminution albumine</td><td>Augmentation fraction libre des medicaments lies aux proteines -> effet renforce (AVK, AINS, valproate).</td></tr>
+      <tr><td style="font-weight:700">Sensibilite cerebrale accrue</td><td>Effets centraux majores : sedation, confusion, chutes. Prudence avec psychotropes.</td></tr>
+      <tr><td style="font-weight:700">Polymedication</td><td>Risque d'interactions +++ (> 5 medicaments). Revoir regulierement l'ordonnance. Conciliation medicamenteuse.</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Regles de prescription chez la PA</h3>
+    <div class="exercise-box">
+      <div class="question">"START LOW, GO SLOW"</div>
+      <div class="scenario">Debuter a la dose la plus faible, augmenter lentement, evaluer regulierement</div>
+    </div>
+    <ul style="padding-left:20px;margin-top:10px;line-height:2;">
+      <li><strong>BZD :</strong> privilegier demi-vies courtes (Oxazepam/Seresta, Lorazepam/Temesta). Eviter les BZD longue duree (Diazepam) = risque chutes +++</li>
+      <li><strong>Anticholinergiques :</strong> a eviter (confusion, retention urinaire, constipation, secheresse buccale, glaucome)</li>
+      <li><strong>Neuroleptiques :</strong> risque accru de chutes, AVC, syndrome metabolique. Privilegier les doses minimales et durees courtes</li>
+      <li><strong>Hypotension orthostatique :</strong> surveiller PA couche/debout a chaque introduction ou modification de psychotrope</li>
+      <li><strong>Antidepresseurs :</strong> ISRS en 1ere intention (Sertraline, Citalopram). Eviter tricycliques (effets anticholinergiques)</li>
+      <li><strong>Criteres STOPP-START :</strong> STOPP = medicaments a arreter chez la PA. START = medicaments a envisager chez la PA</li>
+      <li><strong>Liste de Beers :</strong> liste de medicaments potentiellement inappropries chez les + de 65 ans</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Pathologies gerontopsychiatriques courantes</h3>
+    <div class="formula-card">
+      <h4>Depression du sujet age</h4>
+      <div>Symptomes souvent atypiques : plaintes somatiques, ralentissement, repli, anorexie, troubles cognitifs (pseudo-demence depressive). Risque suicidaire eleve. Traitement : ISRS (Sertraline, Citalopram) ou Mirtazapine si insomnie/anorexie.</div>
+    </div>
+    <div class="formula-card">
+      <h4>Troubles neurocognitifs majeurs</h4>
+      <div><strong>Alzheimer :</strong> troubles mnesiques progressifs -> anticholinesterasiques (Donepezil, Rivastigmine) stade leger-modere, Memantine stade modere-severe.<br>
+      <strong>Vasculaire :</strong> evolution par paliers, facteurs de risque CV.<br>
+      <strong>Corps de Lewy :</strong> hallucinations visuelles, fluctuations, parkinsonisme. CI absolue NLP typiques.<br>
+      <strong>Fronto-temporal :</strong> troubles du comportement precoces, desinhibition. Pas de traitement specifique.</div>
+    </div>
+    <div class="formula-card">
+      <h4>Syndrome confusionnel aigu (delirium) vs Demence</h4>
+      <table class="anti-table" style="font-size:0.85em;">
+        <tr><th></th><th>Delirium</th><th>Demence</th></tr>
+        <tr><td style="font-weight:700">Debut</td><td>Brutal (heures/jours)</td><td>Progressif (mois/annees)</td></tr>
+        <tr><td style="font-weight:700">Conscience</td><td>Fluctuante, alteree</td><td>Preservee longtemps</td></tr>
+        <tr><td style="font-weight:700">Attention</td><td>Tres alteree</td><td>Relativement preservee au debut</td></tr>
+        <tr><td style="font-weight:700">Hallucinations</td><td>Frequentes (visuelles)</td><td>Rares (sauf Corps de Lewy)</td></tr>
+        <tr><td style="font-weight:700">Reversibilite</td><td>OUI si cause traitee</td><td>NON (evolutif)</td></tr>
+        <tr><td style="font-weight:700">Causes</td><td>Infection, deshydratation, iatrogenie, douleur, fecalome, globe vesical</td><td>Neurodegeneratif, vasculaire</td></tr>
+      </table>
+    </div>
+    <div class="formula-card">
+      <h4>Troubles du comportement productifs (SCPD)</h4>
+      <div>Agitation, agressivite, deambulation, cris, desinhibition. Approche non medicamenteuse en 1er : securisation, communication adaptee, stimulation sensorielle. Medicaments si echec : NLP atypiques a dose minimale (Risperidone 0.25-1 mg, Quetiapine), duree la plus courte possible.</div>
+    </div>
+    <div class="formula-card">
+      <h4>Troubles du sommeil chez la PA</h4>
+      <div>Mesures d'hygiene du sommeil en 1er. Si besoin : Melatonine (Circadin), Mirtazapine si depression associee. Eviter BZD au long cours et hypnotiques chez PA (chutes nocturnes, confusion). Zolpidem/Zopiclone : courte duree seulement.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Echelles d'evaluation en gerontopsychiatrie</h3>
+    <table class="anti-table">
+      <tr><th>Echelle</th><th>Domaine evalue</th><th>Details</th></tr>
+      <tr><td style="font-weight:700">MMSE (Mini Mental State)</td><td>Fonctions cognitives</td><td>Score /30. < 24 = trouble cognitif. Orientation, memoire, attention, langage, praxies.</td></tr>
+      <tr><td style="font-weight:700">MoCA (Montreal Cognitive Assessment)</td><td>Fonctions cognitives</td><td>Plus sensible que MMSE pour troubles legers. Score /30.</td></tr>
+      <tr><td style="font-weight:700">NPI (Inventaire Neuropsychiatrique)</td><td>Troubles du comportement</td><td>12 items : delire, hallucinations, agitation, depression, anxiete, euphorie, apathie, desinhibition, irritabilite, comportement moteur aberrant, sommeil, appetit.</td></tr>
+      <tr><td style="font-weight:700">GDS (Geriatric Depression Scale)</td><td>Depression du sujet age</td><td>15 ou 30 items. Oui/Non. Adapte a la PA. > 5/15 = depression probable.</td></tr>
+      <tr><td style="font-weight:700">Cornell</td><td>Depression chez le dement</td><td>Evaluation par l'entourage/soignant quand patient ne peut repondre seul.</td></tr>
+      <tr><td style="font-weight:700">Cohen-Mansfield (CMAI)</td><td>Agitation</td><td>29 comportements d'agitation. Frequence cotee. Utile pour suivi.</td></tr>
+      <tr><td style="font-weight:700">CAM (Confusion Assessment Method)</td><td>Delirium / confusion</td><td>4 criteres : debut aigu, inattention, pensee desorganisee, niveau conscience altere. Diagnostic positif si criteres 1+2 + (3 ou 4).</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ====== TAB 7: METHODES ====== -->
+<div class="section" id="sec7">
+  <div class="card">
+    <h3>Methodes de calcul - Pour ceux qui galèrent</h3>
+    <p style="color:var(--text-light);font-size:0.9em;">9 methodes concretes pour reussir tous les calculs de doses, meme si tu n'es pas a l'aise en maths</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method-num">1</span> Le Produit en Croix (la base absolue)</h3>
+    <p>C'est la seule formule dont tu as vraiment besoin. <strong>Tout le reste en decoule.</strong></p>
+    <div class="method-box">Si A donne B<br>Alors C donne X<br><br><strong>X = (B x C) / A</strong></div>
+    <p style="margin-top:10px;"><strong>Exemple :</strong> Le medecin prescrit 1,5 g d'amoxicilline. Tu as des gelules de 500 mg.</p>
+    <div class="method-box">1 gelule &nbsp;->&nbsp; 500 mg<br>X gelules ->&nbsp; 1500 mg<br><br>X = (1 x 1500) / 500 = <strong>3 gelules</strong></div>
+    <div style="padding:8px 12px;background:var(--warn-bg);border-radius:8px;margin-top:10px;font-size:0.9em;">
+      <strong>Astuce :</strong> Ecris TOUJOURS les unites a cote des chiffres. Si les unites ne "matchent" pas, c'est que tu t'es trompe.
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="method-num">2</span> La Methode "1 PUIS..." (decomposer)</h3>
+    <p>Au lieu de chercher la formule, raisonne par etapes simples a partir de 1 :</p>
+    <p style="margin-top:8px;"><strong>Exemple :</strong> 500 mL de NaCl, debit 40 mL/h. Combien de temps ?</p>
+    <div class="method-box">Etape 1 : En 1 heure, il passe 40 mL<br>Etape 2 : Pour 500 mL, il faut 500 / 40 = 12,5 heures<br>Etape 3 : 12,5 h = <strong>12h30</strong></div>
+    <p style="margin-top:8px;color:var(--text-light);font-size:0.9em;">Tu n'as utilise aucune formule. Juste du bon sens.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method-num">3</span> La Methode des Unites (analyse dimensionnelle)</h3>
+    <p>Tu pars de ce que tu as et tu multiplies par des fractions jusqu'a obtenir l'unite demandee. Les unites s'annulent comme en maths :</p>
+    <p style="margin-top:8px;"><strong>Exemple :</strong> 1000 mL en 8h, trouver le debit en gouttes/min.</p>
+    <div class="method-box">1000 mL &nbsp;&nbsp;&nbsp; 20 gouttes &nbsp;&nbsp;&nbsp; 1 heure<br>-------- &nbsp;x&nbsp; ----------- &nbsp;x&nbsp; ----------<br>8 heures &nbsp;&nbsp;&nbsp;&nbsp; 1 mL &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 60 minutes<br><br>= <strong>41,6 -> 42 gouttes/min</strong></div>
+    <p style="margin-top:8px;color:var(--text-light);font-size:0.9em;">Les "mL" s'annulent, les "heures" s'annulent, il reste gouttes/min.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method-num">4</span> Raccourcis pour les Gouttes</h3>
+    <div class="exercise-box">
+      <div class="question">Le raccourci magique (perfuseur standard 20 gttes/mL) :</div>
+      <div class="method-box" style="background:var(--card);">gouttes/min = Volume (mL) / (3 x nombre d'heures)</div>
+    </div>
+    <p style="margin-top:10px;">Ca marche car 20 gttes/mL et 60 min/h donnent un facteur de 1/3.</p>
+    <table class="anti-table" style="margin-top:10px;">
+      <tr><th>Perfusion</th><th>Calcul</th><th>Resultat</th></tr>
+      <tr><td>1000 mL en 8h</td><td>1000 / (3 x 8) = 1000/24</td><td><strong>42 gttes/min</strong></td></tr>
+      <tr><td>500 mL en 4h</td><td>500 / (3 x 4) = 500/12</td><td><strong>42 gttes/min</strong></td></tr>
+      <tr><td>250 mL en 2h</td><td>250 / (3 x 2) = 250/6</td><td><strong>42 gttes/min</strong></td></tr>
+    </table>
+    <div style="padding:8px 12px;background:var(--warn-bg);border-radius:8px;margin-top:10px;font-size:0.9em;">
+      <strong>Pour le sang</strong> (15 gttes/mL) : divise par <strong>4</strong> au lieu de 3<br>
+      <strong>Pour la pediatrie</strong> (60 micro-gttes/mL) : ne divise pas, c'est direct <strong>mL/h = microgouttes/min</strong>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="method-num">5</span> La Methode "Je Verifie" (garde-fous)</h3>
+    <p>Avant de donner ta reponse, verifie si c'est logique :</p>
+    <table class="red-flag-table">
+      <tr><td style="color:var(--danger);"> > 150 gouttes/min</td><td>IMPOSSIBLE a compter, reverifier la prescription ou le temps</td></tr>
+      <tr><td style="color:var(--danger);"> &lt; 5 gouttes/min</td><td>Suspect : peut-etre envisager un PSE plutot qu'une perfusion</td></tr>
+      <tr><td style="color:var(--danger);"> > 500 mL/h adulte</td><td>NON sauf situation d'urgence vitale (remplissage)</td></tr>
+      <tr><td style="color:var(--danger);"> > 10 comprimes/prise</td><td>Reverifier le calcul et la prescription</td></tr>
+      <tr><td style="color:var(--danger);"> > 100 UI insuline</td><td>Dose inhabituelle en 1 injection, verifier absolument</td></tr>
+      <tr><td style="color:var(--danger);"> > 100 mg morphine PO</td><td>NON chez un patient naif aux opioides</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3><span class="method-num">6</span> La Methode Visuelle (dessiner le circuit)</h3>
+    <p>Pour les gens visuels, <strong>dessine le probleme</strong> :</p>
+    <div class="method-box">
+    Flacon 500 mL<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;|<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;v<br>
+    [ Tubulure 20 gttes/mL ]<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;|<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;v<br>
+    Patient -- en 6 heures<br>
+    <br>
+    -> Je cherche : combien de gouttes par minute ?
+    </div>
+    <p style="margin-top:8px;color:var(--text-light);font-size:0.9em;">Le simple fait de dessiner le circuit aide a comprendre ce qu'on cherche.</p>
+  </div>
+
+  <div class="card">
+    <h3><span class="method-num">7</span> La Methode des Paliers (dilutions)</h3>
+    <p>Pour les dilutions, raisonne en 3 temps :</p>
+    <div class="method-box">
+    <strong>1. Ce que j'ai :</strong>&nbsp; flacon de 160 mg dans 2 mL<br>
+    <strong>2. Ce que je veux :</strong>&nbsp; 80 mg pour le patient<br>
+    <strong>3. Ce que je preleve :</strong>&nbsp; produit en croix<br>
+    <br>
+    Volume = (80 x 2) / 160 = <strong>1 mL</strong>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="method-num">8</span> Conversions a Connaitre Par Coeur</h3>
+    <p>Colle ca quelque part ou tu le vois tous les jours :</p>
+    <div class="method-box">
+    1 g &nbsp;&nbsp;&nbsp;= 1 000 mg<br>
+    1 mg &nbsp;&nbsp;= 1 000 mcg (microgrammes)<br>
+    1 L &nbsp;&nbsp;&nbsp;= 1 000 mL<br>
+    1 mL &nbsp;&nbsp;= 20 gouttes (perfusion standard)<br>
+    1 mL &nbsp;&nbsp;= 15 gouttes (sang)<br>
+    1 mL &nbsp;&nbsp;= 60 microgouttes (pediatrie)<br>
+    1 UI insuline = 0,01 mL (seringue 100 UI/mL)
+    </div>
+    <div style="padding:8px 12px;background:var(--warn-bg);border-radius:8px;margin-top:10px;font-size:0.9em;">
+      <strong>Astuce "deplacer la virgule" :</strong><br>
+      g -> mg : virgule 3 rangs a droite (1,5 g = 1500 mg)<br>
+      mg -> mcg : virgule 3 rangs a droite (0,25 mg = 250 mcg)<br>
+      mg -> g : virgule 3 rangs a gauche (500 mg = 0,5 g)
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="method-num">9</span> Conseils Concrets pour Reussir</h3>
+    <ol style="padding-left:20px;line-height:2.2;">
+      <li><strong>Commence TOUJOURS par convertir dans la meme unite</strong> avant de calculer. 90% des erreurs viennent de la.</li>
+      <li><strong>Ecris tout</strong>, ne fais rien de tete. Meme 500/2.</li>
+      <li><strong>Relis l'enonce 3 fois</strong> avant de commencer. Surligne les donnees.</li>
+      <li><strong>Identifie ce qu'on te demande</strong> : un debit ? un volume ? un nombre de comprimes ? une duree ?</li>
+      <li><strong>Fais des exercices tous les jours</strong>, meme 5 minutes. La repetition cree l'automatisme.</li>
+      <li><strong>Utilise le generateur</strong> (onglet "Calculs") en mode Facile/Formatif pour commencer, puis monte en difficulte.</li>
+      <li><strong>En examen, si tu bloques</strong> : pose le produit en croix. Ca marche pour TOUT.</li>
+    </ol>
+  </div>
+</div>
+
+<div class="footer">PharmApp IFSI Grenoble - Promotion 2025-2028 - UE 2.11 S3 Pharmacologie et therapeutiques</div>
+
+<script>
+// ========== GLOBAL ==========
+let calcCount = 0;
+function toggleDark() {
+  document.documentElement.setAttribute('data-theme',
+    document.documentElement.getAttribute('data-theme') === 'dark' ? '' : 'dark');
+}
+function showTab(i) {
+  document.querySelectorAll('.tab').forEach((t,j) => t.classList.toggle('active', j===i));
+  document.querySelectorAll('.section').forEach((s,j) => s.classList.toggle('active', j===i));
+}
+function pick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+function rand(a,b) { return Math.floor(Math.random()*(b-a+1))+a; }
+function roundN(n,d) { return Math.round(n*Math.pow(10,d))/Math.pow(10,d); }
+
+// ========== DATA ==========
+const PATIENTS = [
+  {n:'M. Dupont', s:'M', w:78, a:65}, {n:'Mme Martin', s:'F', w:62, a:72},
+  {n:'M. Bernard', s:'M', w:85, a:58}, {n:'Mme Petit', s:'F', w:55, a:45},
+  {n:'M. Moreau', s:'M', w:92, a:70}, {n:'Mme Leroy', s:'F', w:68, a:50},
+  {n:'M. Garcia', s:'M', w:73, a:42}, {n:'Mme Roux', s:'F', w:58, a:80},
+  {n:'M. Thomas', s:'M', w:105, a:55}, {n:'Mme Lambert', s:'F', w:48, a:38},
+  {n:'M. Faure', s:'M', w:70, a:75}, {n:'Mme Simon', s:'F', w:65, a:60},
+  {n:'M. Rousseau', s:'M', w:55, a:84}, {n:'Mme Blanc', s:'F', w:48, a:88},
+  {n:'M. Girard', s:'M', w:60, a:79}, {n:'Mme Perrin', s:'F', w:52, a:91},
+];
+const PED_PATIENTS = [
+  {n:'Lucas', w:12, a:3}, {n:'Emma', w:8, a:2}, {n:'Leo', w:22, a:6},
+  {n:'Chloe', w:30, a:9}, {n:'Hugo', w:15, a:4}, {n:'Lea', w:5, a:1},
+  {n:'Nathan', w:35, a:11}, {n:'Manon', w:18, a:5},
+];
+const VOLUMES = [100,250,500,1000];
+const TIMES_MIN = [30,60,120,180,240,360,480,720,1440];
+const TIMES_H = [0.5,1,2,3,4,6,8,12,24];
+const SERVICES = [
+  'service de medecine', 'service de chirurgie', 'service de cardiologie',
+  'service de pneumologie', 'service de neurologie', 'service de geriatrie',
+  'service de pediatrie', 'unite de soins intensifs', 'service des urgences',
+  'service de gastro-enterologie', 'service d\'oncologie'
+];
+
+// ========== EXERCISE GENERATOR ==========
+function generateExercise() {
+  const cat = document.getElementById('calcCat').value;
+  const diff = document.getElementById('calcDiff').value;
+  const type = document.getElementById('calcType').value;
+  const cats = cat === 'all' ? ['gouttes','mlh','dosepoids','dilution','pse','conversion','duree','regle3','imc'] : [cat];
+  const chosen = pick(cats);
+  const ex = buildExercise(chosen, diff, type);
+  calcCount++;
+  document.getElementById('calcCounter').textContent = 'Exercices generes : ' + calcCount;
+  renderExercise(ex);
+}
+
+function buildExercise(cat, diff, type) {
+  const generators = {
+    gouttes: genGouttes, mlh: genMlh, dosepoids: genDosePoids,
+    dilution: genDilution, pse: genPSE, conversion: genConversion,
+    duree: genDuree, regle3: genRegle3, imc: genIMC
+  };
+  return generators[cat](diff, type);
+}
+
+function genGouttes(diff, type) {
+  const p = pick(PATIENTS);
+  const vol = pick(VOLUMES);
+  const timeMin = pick([30,60,120,180,240,360,480]);
+  const timeH = timeMin / 60;
+  const isBlood = Math.random() < 0.2;
+  const isPed = diff === 'difficile' && Math.random() < 0.5;
+  const factor = isPed ? 60 : (isBlood ? 15 : 20);
+  const factorName = isPed ? '60 (micro-gouttes/mL, perfuseur pediatrique)' : (isBlood ? '15 (perfuseur sang)' : '20 (perfuseur standard)');
+  const product = isBlood ? 'une poche de concentre globulaire' : (isPed ? pick(['du serum physiologique','du glucose 5%']) : pick(['du NaCl 0.9%','du glucose 5%','du Ringer Lactate']));
+  const service = isPed ? 'service de pediatrie' : pick(SERVICES);
+  let scenario, question;
+  if (type === 'examen') {
+    scenario = `${p.n}, ${p.a} ans, ${p.w} kg, est hospitalise(e) en ${service}. Le medecin prescrit ${product} de ${vol} mL a passer en ${timeH >= 1 ? timeH + ' heure(s)' : timeMin + ' minutes'}.`;
+    question = `Calculez le debit de la perfusion en gouttes par minute.${isPed ? ' Le service utilise un perfuseur pediatrique (micro-gouttes).' : (isBlood ? ' Vous utilisez un perfuseur a sang.' : '')}`;
+  } else {
+    scenario = `Prescription : ${vol} mL de ${product} en ${timeH >= 1 ? timeH + 'h' : timeMin + ' min'}.`;
+    question = `Quel est le debit en gouttes/min ?${isPed ? ' (perfuseur pediatrique)' : (isBlood ? ' (perfuseur sang)' : '')}`;
+  }
+  const data = [`Volume : ${vol} mL`, `Temps : ${timeMin} min (${timeH}h)`, `Facteur : ${factorName}`];
+  const result = roundN((vol * factor) / timeMin, 1);
+  const steps = [
+    'Formule : Debit (gttes/min) = (Volume x Facteur) / Temps (min)',
+    `= (${vol} x ${factor}) / ${timeMin}`,
+    `= ${vol * factor} / ${timeMin}`,
+    `= ${result} gouttes/min`
+  ];
+  let rounded = Math.round(result);
+  if (rounded !== result) steps.push(`Arrondi : ${rounded} gouttes/min`);
+  let tip = '';
+  if (rounded > 150) tip = 'Un debit > 150 gouttes/min est tres eleve. Reverifier la prescription et le temps.';
+  else if (rounded < 5) tip = 'Un debit < 5 gouttes/min est tres faible. Verifier la prescription.';
+  else if (isBlood) tip = 'Pour le sang : ne jamais depasser 4h de perfusion (risque bacterien). Perfuseur sang = 15 gttes/mL.';
+  else if (isPed) tip = 'En pediatrie, on utilise des micro-gouttes (60/mL) pour plus de precision.';
+  else tip = 'Verifier : 1 mL = 20 gouttes (perfuseur standard). Penser a reguler le debit apres la pose.';
+  return { formula: 'Debit (gttes/min) = (Volume en mL x Facteur) / Temps (min)', scenario, question, data, steps, answer: `${rounded} gouttes/min`, tip, difficulty: isPed || isBlood ? 'moyen' : 'facile' };
+}
+
+function genMlh(diff, type) {
+  const p = pick(PATIENTS);
+  const vol = pick(VOLUMES);
+  const timeH = pick([1,2,3,4,6,8,12,24]);
+  const product = pick(['NaCl 0.9%','Glucose 5%','Ringer Lactate','Glucose 10%']);
+  const service = pick(SERVICES);
+  let scenario, question;
+  if (type === 'examen') {
+    scenario = `${p.n}, ${p.a} ans, est hospitalise(e) en ${service}. Prescription : ${vol} mL de ${product} a perfuser sur ${timeH} heure(s). La perfusion est branchee sur une pompe volumetrique.`;
+    question = 'Calculez le debit a regler sur la pompe en mL/h.';
+  } else {
+    scenario = `Prescription : ${vol} mL de ${product} en ${timeH}h sur pompe.`;
+    question = 'Quel debit en mL/h ?';
+  }
+  const result = roundN(vol / timeH, 1);
+  const steps = ['Formule : Debit (mL/h) = Volume (mL) / Temps (h)', `= ${vol} / ${timeH}`, `= ${result} mL/h`];
+  let tip = result > 250 ? 'Debit > 250 mL/h : verifier la prescription, risque de surcharge.' : 'Toujours verifier le volume restant et le temps lors de chaque tour de surveillance.';
+  return { formula: 'Debit (mL/h) = Volume (mL) / Temps (h)', scenario, question, data: [`Volume : ${vol} mL`, `Temps : ${timeH} h`], steps, answer: `${result} mL/h`, tip, difficulty: 'facile' };
+}
+
+function genDosePoids(diff, type) {
+  const isPed = diff !== 'facile' && Math.random() < 0.5;
+  const p = isPed ? pick(PED_PATIENTS) : pick(PATIENTS);
+  const drugs = [
+    {name:'Amoxicilline', dose:50, unit:'mg/kg/jour', freq:3, max:3000},
+    {name:'Paracetamol', dose:15, unit:'mg/kg/prise', freq:4, max:4000},
+    {name:'Gentamicine', dose:3, unit:'mg/kg/jour', freq:1, max:null},
+    {name:'Vancomycine', dose:40, unit:'mg/kg/jour', freq:4, max:null},
+    {name:'Ceftriaxone', dose:50, unit:'mg/kg/jour', freq:1, max:4000},
+    {name:'Ibuprofene', dose:10, unit:'mg/kg/prise', freq:3, max:1200},
+  ];
+  const drug = pick(drugs);
+  const service = isPed ? 'service de pediatrie' : pick(SERVICES);
+  let scenario, question;
+  if (type === 'examen') {
+    scenario = `${isPed ? '' : (p.s === 'M' ? 'M. ' : 'Mme ')}${p.n}, ${p.a} ans, ${p.w} kg, est pris(e) en charge en ${service}. Le medecin prescrit ${drug.name} a la posologie de ${drug.dose} ${drug.unit}.`;
+    question = `Calculez la dose ${drug.unit.includes('jour') ? 'journaliere' : 'par prise'} pour ce patient.${drug.freq > 1 && drug.unit.includes('jour') ? ' Precisez la dose par prise si repartie en ' + drug.freq + ' prises.' : ''}`;
+  } else {
+    scenario = `Patient de ${p.w} kg. Prescription : ${drug.name} ${drug.dose} ${drug.unit}.`;
+    question = `Calculez la dose totale.${drug.freq > 1 && drug.unit.includes('jour') ? ' Puis la dose par prise (' + drug.freq + ' prises/jour).' : ''}`;
+  }
+  const totalDose = roundN(drug.dose * p.w, 1);
+  const perDose = drug.freq > 1 && drug.unit.includes('jour') ? roundN(totalDose / drug.freq, 1) : null;
+  const steps = ['Formule : Dose = Posologie x Poids', `= ${drug.dose} x ${p.w}`, `= ${totalDose} mg${drug.unit.includes('jour') ? '/jour' : '/prise'}`];
+  if (perDose !== null) steps.push(`Dose par prise = ${totalDose} / ${drug.freq} = ${perDose} mg/prise`);
+  if (drug.max && totalDose > drug.max) steps.push(`ATTENTION : dose maximale = ${drug.max} mg/jour. Reduire a ${drug.max} mg/jour.`);
+  let tip = drug.max && totalDose > drug.max ? `Dose calculee > dose max (${drug.max} mg/jour). Toujours verifier les posologies maximales !` : `Verifier la posologie dans le Vidal. ${isPed ? 'En pediatrie, toujours calculer au poids.' : ''}`;
+  return { formula: 'Dose = Posologie x Poids', scenario, question, data: [`Poids : ${p.w} kg`, `Posologie : ${drug.dose} ${drug.unit}`, drug.freq > 1 ? `Repartition : ${drug.freq} prises/jour` : ''].filter(Boolean), steps, answer: perDose !== null ? `${totalDose} mg/jour soit ${perDose} mg/prise` : `${totalDose} mg`, tip, difficulty: perDose !== null ? 'moyen' : 'facile' };
+}
+
+function genDilution(diff, type) {
+  const p = pick(PATIENTS);
+  const scenarios = [
+    {drug:'Ceftriaxone', flacon:'1 g', reconst:'10 mL', concResult:100, unit:'mg/mL', dosePrescrite:rand(5,9)*100, service:'service de medecine'},
+    {drug:'Vancomycine', flacon:'500 mg', reconst:'10 mL', concResult:50, unit:'mg/mL', dosePrescrite:rand(2,5)*100, service:'unite de soins intensifs'},
+    {drug:'Amoxicilline', flacon:'1 g', reconst:'20 mL', concResult:50, unit:'mg/mL', dosePrescrite:rand(5,10)*100, service:'service de chirurgie'},
+    {drug:'Gentamicine', flacon:'80 mg/2 mL', reconst:null, concResult:40, unit:'mg/mL', dosePrescrite:rand(1,3)*40, service:'service de medecine'},
+  ];
+  const sc = pick(scenarios);
+  const volAPrelever = roundN(sc.dosePrescrite / sc.concResult, 2);
+  let scenario, question;
+  if (type === 'examen') {
+    scenario = `${p.n}, ${p.a} ans, ${p.w} kg, en ${sc.service}. Prescription : ${sc.drug} ${sc.dosePrescrite} mg en IV. Vous disposez d'un flacon de ${sc.drug} ${sc.flacon}${sc.reconst ? ' a reconstituer dans ' + sc.reconst + ' de solvant' : ' (solution injectable)'}.`;
+    question = 'Calculez le volume a prelever pour preparer l\'injection.';
+  } else {
+    scenario = `Prescription : ${sc.drug} ${sc.dosePrescrite} mg IV. Flacon : ${sc.flacon}${sc.reconst ? ' reconstitue dans ' + sc.reconst : ''}.`;
+    question = 'Volume a prelever ?';
+  }
+  const steps = [];
+  if (sc.reconst) steps.push(`Reconstitution : ${sc.flacon} dans ${sc.reconst} -> ${sc.concResult} ${sc.unit}`);
+  steps.push(`Concentration apres reconstitution : ${sc.concResult} ${sc.unit}`);
+  steps.push('Formule : Volume a prelever = Dose prescrite / Concentration');
+  steps.push(`= ${sc.dosePrescrite} / ${sc.concResult}`);
+  steps.push(`= ${volAPrelever} mL`);
+  return { formula: 'Volume = Dose prescrite / Concentration', scenario, question, data: [`Dose prescrite : ${sc.dosePrescrite} mg`, `Flacon : ${sc.flacon}`, sc.reconst ? `Reconstitution : ${sc.reconst} solvant` : `Concentration : ${sc.concResult} ${sc.unit}`].filter(Boolean), steps, answer: `${volAPrelever} mL`, tip: 'Toujours verifier la concentration APRES reconstitution. Ne pas confondre la quantite totale du flacon avec la concentration.', difficulty: sc.reconst ? 'moyen' : 'facile' };
+}
+
+function genPSE(diff, type) {
+  const p = pick(PATIENTS);
+  const drugs = [
+    {name:'Dobutamine', dose:5, unit:'mcg/kg/min', concSer:250, volSer:50, unitSer:'mg'},
+    {name:'Noradrenaline', dose:0.1, unit:'mcg/kg/min', concSer:8, volSer:48, unitSer:'mg'},
+    {name:'Heparine', dose:500, unit:'UI/kg/jour', concSer:25000, volSer:50, unitSer:'UI'},
+    {name:'Morphine', dose:1, unit:'mg/h', concSer:50, volSer:50, unitSer:'mg', noWeight:true},
+  ];
+  const drug = pick(drugs);
+  const concMlh = drug.concSer / drug.volSer;
+  let totalDose, debitMlh;
+  if (drug.noWeight) { totalDose = drug.dose; debitMlh = roundN(totalDose / concMlh, 2); }
+  else if (drug.unit.includes('mcg/kg/min')) { const dpm = drug.dose * p.w; const dph = dpm * 60; const dphmg = dph / 1000; debitMlh = roundN(dphmg / concMlh, 2); totalDose = dphmg; }
+  else { totalDose = drug.dose * p.w; const dh = totalDose / 24; debitMlh = roundN(dh / concMlh, 2); }
+  let scenario, question;
+  if (type === 'examen') {
+    scenario = `${p.n}, ${p.a} ans, ${p.w} kg, en unite de soins intensifs. Prescription : ${drug.name} ${drug.dose} ${drug.unit}${drug.noWeight ? '' : ' pour ce patient'}. Vous preparez une seringue de ${drug.volSer} mL contenant ${drug.concSer} ${drug.unitSer} de ${drug.name}.`;
+    question = 'Calculez le debit du PSE (pousse-seringue electrique) en mL/h.';
+  } else {
+    scenario = `PSE : ${drug.name} ${drug.dose} ${drug.unit}. Patient ${p.w} kg. Seringue : ${drug.concSer} ${drug.unitSer} / ${drug.volSer} mL.`;
+    question = 'Debit du PSE en mL/h ?';
+  }
+  const steps = [];
+  steps.push(`Concentration seringue : ${drug.concSer} ${drug.unitSer} / ${drug.volSer} mL = ${concMlh} ${drug.unitSer === 'UI' ? 'UI' : 'mg'}/mL`);
+  if (drug.noWeight) { steps.push(`Dose prescrite : ${drug.dose} mg/h`); steps.push(`Debit = ${drug.dose} / ${concMlh} = ${debitMlh} mL/h`); }
+  else if (drug.unit.includes('mcg/kg/min')) { const dpm = drug.dose * p.w; const dph = dpm * 60; const dphmg = roundN(dph / 1000, 3); steps.push(`Dose/min = ${drug.dose} x ${p.w} = ${dpm} mcg/min`); steps.push(`Dose/h = ${dpm} x 60 = ${dph} mcg/h = ${dphmg} mg/h`); steps.push(`Debit = ${dphmg} / ${concMlh} = ${debitMlh} mL/h`); }
+  else { const dj = drug.dose * p.w; const dh = roundN(dj / 24, 2); steps.push(`Dose/jour = ${drug.dose} x ${p.w} = ${dj} ${drug.unitSer}/jour`); steps.push(`Dose/h = ${dj} / 24 = ${dh} ${drug.unitSer}/h`); steps.push(`Debit = ${dh} / ${concMlh} = ${debitMlh} mL/h`); }
+  return { formula: 'Debit PSE (mL/h) = Dose horaire / Concentration seringue (mg/mL)', scenario, question, data: [`Poids : ${p.w} kg`, `Posologie : ${drug.dose} ${drug.unit}`, `Seringue : ${drug.concSer} ${drug.unitSer} / ${drug.volSer} mL`], steps, answer: `${debitMlh} mL/h`, tip: 'PSE : toujours verifier la concentration de la seringue. Attention aux conversions mcg -> mg (diviser par 1000).', difficulty: 'difficile' };
+}
+
+function genConversion(diff, type) {
+  const conversions = [
+    {q:'Convertir 2.5 g en mg', a:2500, unit:'mg', steps:['1 g = 1000 mg','2.5 x 1000 = 2500 mg']},
+    {q:'Convertir 750 mg en g', a:0.75, unit:'g', steps:['1 g = 1000 mg','750 / 1000 = 0.75 g']},
+    {q:'Convertir 500 mcg en mg', a:0.5, unit:'mg', steps:['1 mg = 1000 mcg','500 / 1000 = 0.5 mg']},
+    {q:'Convertir 0.25 mg en mcg', a:250, unit:'mcg', steps:['1 mg = 1000 mcg','0.25 x 1000 = 250 mcg']},
+    {q:'Un flacon d\'insuline contient 100 UI/mL. Combien d\'UI dans 0.3 mL ?', a:30, unit:'UI', steps:['100 UI/mL x 0.3 mL = 30 UI']},
+    {q:'Prescription : 40 UI d\'insuline. Concentration : 100 UI/mL. Volume a injecter ?', a:0.4, unit:'mL', steps:['Volume = 40 / 100 = 0.4 mL']},
+    {q:'Convertir 1500 mL en L', a:1.5, unit:'L', steps:['1 L = 1000 mL','1500 / 1000 = 1.5 L']},
+    {q:'Convertir 0.125 g en mg', a:125, unit:'mg', steps:['1 g = 1000 mg','0.125 x 1000 = 125 mg']},
+    {q:'Patient de 70 kg. Prescription : 15 mcg/kg. Dose totale en mg ?', a:1.05, unit:'mg', steps:['Dose en mcg = 15 x 70 = 1050 mcg','1050 / 1000 = 1.05 mg']},
+    {q:'Convertir 3 L/24h en mL/h', a:125, unit:'mL/h', steps:['3 L = 3000 mL','3000 / 24 = 125 mL/h']},
+  ];
+  const c = pick(conversions);
+  return { formula: 'Conversions d\'unites', scenario: type === 'examen' ? 'Dans le cadre de la preparation d\'un traitement, vous devez effectuer la conversion suivante.' : '', question: c.q, data: [], steps: c.steps, answer: `${c.a} ${c.unit}`, tip: 'Rappels : 1 g = 1000 mg = 1 000 000 mcg. 1 L = 1000 mL. Insuline standard = 100 UI/mL.', difficulty: 'facile' };
+}
+
+function genDuree(diff, type) {
+  const p = pick(PATIENTS);
+  const vol = pick(VOLUMES);
+  const debit = pick([25,42,50,63,83,100,125,167,250]);
+  const dureeH = roundN(vol / debit, 2);
+  const heures = Math.floor(dureeH);
+  const minutes = Math.round((dureeH - heures) * 60);
+  let scenario, question;
+  if (type === 'examen') {
+    scenario = `${p.n} est perfuse(e) avec ${vol} mL de NaCl 0.9%. La pompe volumetrique est reglee a ${debit} mL/h.`;
+    question = 'Calculez la duree de la perfusion en heures et minutes.';
+  } else {
+    scenario = `Perfusion : ${vol} mL a ${debit} mL/h.`;
+    question = 'Duree de perfusion ?';
+  }
+  return { formula: 'Duree = Volume / Debit', scenario, question, data: [`Volume : ${vol} mL`, `Debit : ${debit} mL/h`], steps: ['Formule : Duree (h) = Volume (mL) / Debit (mL/h)', `= ${vol} / ${debit}`, `= ${dureeH} h`, `= ${heures}h ${minutes}min`], answer: `${heures}h ${minutes.toString().padStart(2,'0')}min`, tip: 'Pour convertir la partie decimale en minutes : partie decimale x 60. Exemple : 0.75h = 0.75 x 60 = 45 min.', difficulty: 'facile' };
+}
+
+function genRegle3(diff, type) {
+  const scenarios = [
+    {text:'Un comprime contient 500 mg de paracetamol. Combien de comprimes pour 1500 mg ?', steps:['1 cp -> 500 mg','x cp -> 1500 mg','x = (1 x 1500) / 500 = 3 comprimes'], answer:'3 comprimes'},
+    {text:'Un flacon de 200 mL contient 10 g de produit. Combien de mL pour 2.5 g ?', steps:['200 mL -> 10 g','x mL -> 2.5 g','x = (200 x 2.5) / 10 = 50 mL'], answer:'50 mL'},
+    {text:'Une ampoule de 5 mL contient 50 mg. Volume pour 30 mg ?', steps:['5 mL -> 50 mg','x mL -> 30 mg','x = (5 x 30) / 50 = 3 mL'], answer:'3 mL'},
+    {text:'Un flacon de 10 mL contient 250 mg. Volume pour 100 mg ?', steps:['10 mL -> 250 mg','x mL -> 100 mg','x = (10 x 100) / 250 = 4 mL'], answer:'4 mL'},
+    {text:'Solution a 2%. Combien de mg dans 50 mL ?', steps:['2% = 2 g/100 mL = 2000 mg/100 mL','100 mL -> 2000 mg','50 mL -> x mg','x = (2000 x 50) / 100 = 1000 mg'], answer:'1000 mg'},
+    {text:'Sirop : 125 mg / 5 mL. Volume pour 250 mg ?', steps:['5 mL -> 125 mg','x mL -> 250 mg','x = (5 x 250) / 125 = 10 mL'], answer:'10 mL'},
+  ];
+  const sc = pick(scenarios);
+  return { formula: 'Regle de trois (produit en croix)', scenario: type === 'examen' ? 'Dans le cadre de la preparation du traitement, resolvez le probleme suivant.' : '', question: sc.text, data: [], steps: sc.steps, answer: sc.answer, tip: 'Regle de trois : toujours identifier les 3 valeurs connues et l\'inconnue. Poser le tableau de correspondance.', difficulty: 'facile' };
+}
+
+function genIMC(diff, type) {
+  const p = pick(PATIENTS);
+  const taille = roundN(1.5 + Math.random() * 0.4, 2);
+  const imc = roundN(p.w / (taille * taille), 1);
+  let interpret = '';
+  if (imc < 18.5) interpret = 'Insuffisance ponderale (< 18.5)';
+  else if (imc < 25) interpret = 'Poids normal (18.5 - 24.9)';
+  else if (imc < 30) interpret = 'Surpoids (25 - 29.9)';
+  else if (imc < 35) interpret = 'Obesite classe I (30 - 34.9)';
+  else interpret = 'Obesite classe II+ (>= 35)';
+  let scenario, question;
+  if (type === 'examen') {
+    scenario = `${p.n}, ${p.a} ans, pese ${p.w} kg pour ${taille} m. Vous realisez son bilan d'entree en ${pick(SERVICES)}.`;
+    question = 'Calculez l\'IMC de ce patient et interpretez le resultat.';
+  } else {
+    scenario = `Patient : ${p.w} kg, ${taille} m.`;
+    question = 'Calculez l\'IMC.';
+  }
+  return { formula: 'IMC = Poids (kg) / Taille (m)^2', scenario, question, data: [`Poids : ${p.w} kg`, `Taille : ${taille} m`], steps: ['Formule : IMC = Poids / Taille^2', `= ${p.w} / (${taille} x ${taille})`, `= ${p.w} / ${roundN(taille*taille, 4)}`, `= ${imc} kg/m2`, `Interpretation : ${interpret}`], answer: `${imc} kg/m2 - ${interpret}`, tip: 'IMC : < 18.5 maigreur | 18.5-24.9 normal | 25-29.9 surpoids | >= 30 obesite.', difficulty: 'facile' };
+}
+
+function renderExercise(ex) {
+  const area = document.getElementById('exerciseArea');
+  const id = 'corr' + calcCount;
+  area.innerHTML = `
+    <div class="card">
+      <span style="display:inline-block;padding:3px 10px;background:${ex.difficulty==='facile'?'var(--success)':ex.difficulty==='moyen'?'var(--warn)':'var(--danger)'};color:#fff;border-radius:20px;font-size:0.75em;margin-bottom:8px;">${ex.difficulty.charAt(0).toUpperCase()+ex.difficulty.slice(1)}</span>
+      <div class="exercise-box">
+        ${ex.scenario ? '<div class="scenario">' + ex.scenario + '</div>' : ''}
+        <div class="question">${ex.question}</div>
+        ${ex.data.length ? '<div class="data">' + ex.data.map(d=>'<span>'+d+'</span>').join('') + '</div>' : ''}
+      </div>
+      <div style="margin-top:12px;text-align:center;">
+        <button class="btn btn-success" onclick="document.getElementById('${id}').classList.add('visible')">Voir la correction</button>
+      </div>
+      <div class="correction" id="${id}">
+        <h4>Correction</h4>
+        <div class="formula-display">${ex.formula}</div>
+        ${ex.steps.map(s=>'<div class="step">'+s+'</div>').join('')}
+        <div class="final">${ex.answer}</div>
+        ${ex.tip ? '<div class="tip">' + ex.tip + '</div>' : ''}
+      </div>
+    </div>
+  `;
+}
+
+// ========== MEDICATIONS DATABASE ==========
+const MEDS = [
+  {dci:'Paracetamol',com:'-',cls:'Antalgique palier 1',cat:'Antalgiques',ind:'Douleur, fievre',voie:'PO, IV',ei:'Hepatotoxicite (surdosage)',ci:'Insuffisance hepatique severe',surv:'Fonction hepatique si prolonge',anti:'N-Acetylcysteine'},
+  {dci:'Ibuprofene',com:'Advil, Nurofen',cls:'AINS',cat:'Antalgiques',ind:'Douleur inflammatoire, fievre',voie:'PO',ei:'UGD, IR, hemorragie',ci:'UGD, grossesse T3, IR severe',surv:'Fonction renale, signes digestifs',anti:'-'},
+  {dci:'Tramadol',com:'Topalgic',cls:'Antalgique palier 2',cat:'Antalgiques',ind:'Douleur moderee a severe',voie:'PO, IV',ei:'Nausees, vertiges, constipation, dependance',ci:'Epilepsie, IMAO, insuff. resp.',surv:'EVA/EN, transit, vigilance',anti:'Naloxone'},
+  {dci:'Morphine',com:'Skenan, Actiskenan',cls:'Antalgique palier 3',cat:'Antalgiques',ind:'Douleur severe, cancer',voie:'PO, SC, IV',ei:'Depression resp., constipation, nausees, RAU',ci:'Insuff. respiratoire, trauma cranien',surv:'FR >= 10/min, sedation, EVA, transit',anti:'NALOXONE (Narcan)'},
+  {dci:'Fentanyl',com:'Durogesic',cls:'Antalgique palier 3',cat:'Antalgiques',ind:'Douleur chronique severe',voie:'Patch, IV',ei:'Idem morphine',ci:'Idem morphine',surv:'Idem morphine, site du patch',anti:'NALOXONE'},
+  {dci:'Amoxicilline',com:'Clamoxyl',cls:'Penicilline',cat:'Antibiotiques',ind:'Infections ORL, resp., urinaires',voie:'PO, IV',ei:'Allergie, diarrhee',ci:'Allergie penicillines, MNI',surv:'Signes allergiques, transit',anti:'-'},
+  {dci:'Amoxicilline + Ac. clavulanique',com:'Augmentin',cls:'Penicilline + inhib. beta-lact.',cat:'Antibiotiques',ind:'Infections resistantes',voie:'PO, IV',ei:'Allergie, diarrhee, hepatite',ci:'Allergie penicillines',surv:'Signes allergiques, bilan hepatique',anti:'-'},
+  {dci:'Ceftriaxone',com:'Rocephine',cls:'C3G',cat:'Antibiotiques',ind:'Infections severes, meningite',voie:'IV, IM',ei:'Allergie, diarrhee, lithiase',ci:'Allergie cephalosporines',surv:'Signes allergiques, voie IV',anti:'-'},
+  {dci:'Gentamicine',com:'Gentalline',cls:'Aminoside',cat:'Antibiotiques',ind:'Infections Gram -, endocardite',voie:'IV, IM',ei:'Nephrotoxicite, ototoxicite',ci:'IR, myasthenie, grossesse',surv:'Pic/residuel, creatinine, audiogramme',anti:'-'},
+  {dci:'Vancomycine',com:'Vancocine',cls:'Glycopeptide',cat:'Antibiotiques',ind:'Infections SARM',voie:'IV lente',ei:'Nephrotoxicite, Red man sd',ci:'Allergie',surv:'Taux residuel, creatinine, vitesse perf.',anti:'-'},
+  {dci:'Metronidazole',com:'Flagyl',cls:'Nitro-imidazole',cat:'Antibiotiques',ind:'Anaerobies, HP, C. difficile',voie:'PO, IV',ei:'Nausees, gout metallique, effet antabuse',ci:'Allergie, grossesse T1',surv:'Pas d\'alcool, neuropathie si prolonge',anti:'-'},
+  {dci:'Enoxaparine',com:'Lovenox',cls:'HBPM',cat:'Anticoagulants',ind:'Prevention/traitement TVP/EP',voie:'SC',ei:'Hemorragie, TIH, hematome',ci:'Hemorragie active, TIH, IR severe',surv:'Plaquettes 2x/sem, anti-Xa, signes hemor.',anti:'Protamine (partiel)'},
+  {dci:'Heparine sodique',com:'Heparine',cls:'HNF',cat:'Anticoagulants',ind:'TVP/EP curatif, SCA',voie:'IV, SC',ei:'Hemorragie, TIH',ci:'Hemorragie active, TIH',surv:'TCA /4-6h, plaquettes 2x/sem',anti:'PROTAMINE'},
+  {dci:'Warfarine',com:'Coumadine',cls:'AVK',cat:'Anticoagulants',ind:'FA, prothese valvulaire, TVP/EP',voie:'PO',ei:'Hemorragie +++',ci:'Hemorragie active, IH, grossesse',surv:'INR cible 2-3, carnet AVK',anti:'VITAMINE K + PPSB'},
+  {dci:'Rivaroxaban',com:'Xarelto',cls:'AOD (anti-Xa)',cat:'Anticoagulants',ind:'FA, TVP/EP',voie:'PO',ei:'Hemorragie',ci:'Hemorragie active, IR severe',surv:'Fonction renale, signes hemor.',anti:'Pas d\'antidote courant'},
+  {dci:'Ramipril',com:'Triatec',cls:'IEC',cat:'Antihypertenseurs',ind:'HTA, IC, post-IDM',voie:'PO',ei:'Toux seche, hyperK+, hypotension',ci:'Grossesse, stenose bilat. art. renales',surv:'PA couche/debout, iono, creatinine',anti:'-'},
+  {dci:'Losartan',com:'Cozaar',cls:'ARA2',cat:'Antihypertenseurs',ind:'HTA, IC si intolerance IEC',voie:'PO',ei:'HyperK+, hypotension (pas de toux)',ci:'Grossesse, stenose bilat. art. renales',surv:'PA, iono, creatinine',anti:'-'},
+  {dci:'Amlodipine',com:'Amlor',cls:'ICa (DHP)',cat:'Antihypertenseurs',ind:'HTA, angor',voie:'PO',ei:'Oedemes MI, cephalees, flush',ci:'Choc cardiogenique',surv:'PA, FC, oedemes MI',anti:'-'},
+  {dci:'Bisoprolol',com:'Detensiel',cls:'Betabloquant',cat:'Antihypertenseurs',ind:'HTA, IC, angor, controle FC',voie:'PO',ei:'Bradycardie, hypotension, bronchospasme',ci:'Asthme, BAV 2-3, bradycardie severe',surv:'PA, FC > 50/min',anti:'Glucagon + Adrenaline'},
+  {dci:'Furosemide',com:'Lasilix',cls:'Diuretique de l\'anse',cat:'Diuretiques',ind:'IC, OAP, oedemes',voie:'PO, IV',ei:'HypoK+, deshydratation, hypotension',ci:'Hypovolemie, hypoK+ severe',surv:'Poids, iono (K+), creatinine, diurese',anti:'-'},
+  {dci:'Spironolactone',com:'Aldactone',cls:'Epargneur de K+',cat:'Diuretiques',ind:'IC severe, cirrhose',voie:'PO',ei:'HyperK+, gynecomastie',ci:'IR severe, hyperK+',surv:'Iono (K+), creatinine, poids',anti:'-'},
+  {dci:'Metformine',com:'Glucophage',cls:'Biguanide',cat:'Antidiabetiques',ind:'Diabete type 2 (1ere intention)',voie:'PO',ei:'Diarrhee, nausees, acidose lactique',ci:'IR severe (DFG<30), IH, hypoxie',surv:'HbA1c, glycemie, fonction renale. Arret 48h avant iode',anti:'-'},
+  {dci:'Gliclazide',com:'Diamicron',cls:'Sulfamide hypoglycemiant',cat:'Antidiabetiques',ind:'Diabete type 2',voie:'PO',ei:'HYPOGLYCEMIE +++, prise de poids',ci:'IR severe, IH, grossesse',surv:'Glycemie capillaire +++, HbA1c',anti:'Glucagon'},
+  {dci:'Insuline (Glargine/Asparte)',com:'Lantus / Novorapid',cls:'Insuline basale/prandiale',cat:'Antidiabetiques',ind:'DT1 (obligatoire), DT2 si echec',voie:'SC (IV rapide)',ei:'Hypoglycemie, lipodystrophie',ci:'Hypoglycemie',surv:'Glycemie capillaire, HbA1c, sites injection',anti:'GLUCAGON'},
+  {dci:'Levothyroxine',com:'Levothyrox',cls:'Hormone thyroidienne',cat:'Thyroide',ind:'Hypothyroidie',voie:'PO',ei:'Si surdosage : tachycardie, tremblements',ci:'Hyperthyroidie, insuff. coronarienne',surv:'TSH /6-8 sem apres modif. A jeun 30 min.',anti:'-'},
+  {dci:'Carbimazole',com:'Neo-Mercazole',cls:'ATS',cat:'Thyroide',ind:'Hyperthyroidie',voie:'PO',ei:'AGRANULOCYTOSE, eruption, hepatotox.',ci:'IH severe, allergie',surv:'NFS +++. Fievre+angine = NFS urgence',anti:'-'},
+  {dci:'Sertraline',com:'Zoloft',cls:'ISRS',cat:'Psychotropes',ind:'Depression, anxiete, TOC',voie:'PO',ei:'Nausees, cephalees, insomnie, tr. sexuels',ci:'Association IMAO',surv:'Risque suicidaire debut ttt, observance',anti:'-'},
+  {dci:'Risperidone',com:'Risperdal',cls:'NLP atypique',cat:'Psychotropes',ind:'Schizophrenie, tr. bipolaires',voie:'PO, IM LP',ei:'Prise poids, sd metabolique, sedation',ci:'Pheochromocytome, Parkinson',surv:'Poids, glycemie, bilan lipidique, SEP',anti:'-'},
+  {dci:'Haloperidol',com:'Haldol',cls:'NLP typique',cat:'Psychotropes',ind:'Psychoses aigues, agitation',voie:'PO, IM, IV',ei:'SEP +++, SNM (urgence vitale)',ci:'Parkinson, QT long',surv:'SEP, ECG (QT), constipation, T° (SNM)',anti:'-'},
+  {dci:'Alprazolam',com:'Xanax',cls:'Benzodiazepine',cat:'Psychotropes',ind:'Anxiete aigue, insomnie',voie:'PO',ei:'Dependance, somnolence, chutes',ci:'Myasthenie, insuff. resp. severe',surv:'Duree max 12 sem, sevrage progressif',anti:'FLUMAZENIL (Anexate)'},
+  {dci:'Lithium',com:'Teralithe',cls:'Thymoregulateur',cat:'Psychotropes',ind:'Trouble bipolaire',voie:'PO',ei:'Tremblements, polyurie, hypothyroidie, nephrotox.',ci:'IR severe, deshydratation, grossesse T1',surv:'Lithiemie 0.5-1.2 mEq/L, fonction renale, TSH',anti:'-'},
+  {dci:'Valproate de sodium',com:'Depakine',cls:'Antiepileptique',cat:'Antiepileptiques',ind:'Epilepsie generalisee, tr. bipolaire',voie:'PO, IV',ei:'Hepatotox., prise poids, TERATOGENE +++',ci:'IH severe, FEMME EN AGE DE PROCREER',surv:'Taux plasmatiques, NFS, bilan hepatique',anti:'-'},
+  {dci:'Carbamazepine',com:'Tegretol',cls:'Antiepileptique',cat:'Antiepileptiques',ind:'Epilepsie partielle, nevralgie V',voie:'PO',ei:'Leucopenie, hypoNa+, rash, inducteur enzym.',ci:'BAV, IH severe',surv:'Taux plasmatiques, NFS, iono',anti:'-'},
+  {dci:'Levodopa + Benserazide',com:'Modopar',cls:'L-DOPA',cat:'Antiparkinsoniens',ind:'Maladie de Parkinson',voie:'PO',ei:'Nausees, hypotension orth., dyskinesies, on-off',ci:'Pheochromocytome, psychose severe',surv:'Mouvements involontaires, PA, troubles psy',anti:'-'},
+  {dci:'Salbutamol',com:'Ventoline',cls:'SABA (beta-2 court)',cat:'Bronchodilatateurs',ind:'Crise d\'asthme, bronchospasme',voie:'Inhal., Nebul., IV',ei:'Tachycardie, tremblements, hypoK+',ci:'Allergie',surv:'FC, DEP, technique inhalation',anti:'-'},
+  {dci:'Beclometasone',com:'Becotide, Qvar',cls:'CSI (corticoide inhale)',cat:'Bronchodilatateurs',ind:'Asthme (ttt de fond)',voie:'Inhal.',ei:'Candidose buccale, dysphonie',ci:'TB pulmonaire non traitee',surv:'Rincage bouche apres, technique inhal.',anti:'-'},
+  {dci:'Tiotropium',com:'Spiriva',cls:'LAMA (anticholinerg. long)',cat:'Bronchodilatateurs',ind:'BPCO (ttt de fond)',voie:'Inhal.',ei:'Secheresse buccale, constipation',ci:'Glaucome angle ferme, adenome prostate',surv:'Technique inhalation, DEP',anti:'-'},
+  {dci:'Omeprazole',com:'Mopral',cls:'IPP',cat:'Gastro-enterologie',ind:'UGD, RGO, prevention UGD/AINS',voie:'PO, IV',ei:'Long cours : malabsorption (Mg,Ca,B12)',ci:'Allergie',surv:'Pas au long cours sans indication. A jeun.',anti:'-'},
+  {dci:'Metoclopramide',com:'Primperan',cls:'Antiemetique prokinetique',cat:'Gastro-enterologie',ind:'Nausees, vomissements',voie:'PO, IV, IM',ei:'SEP, somnolence',ci:'Enfant <1 an, association NLP',surv:'Effets extrapyramidaux, duree prescription',anti:'-'},
+  {dci:'Ondansetron',com:'Zophren',cls:'Anti-5HT3 (setron)',cat:'Gastro-enterologie',ind:'Nausees/vomissements post-chimio',voie:'PO, IV',ei:'Constipation, cephalees, QT long',ci:'QT long congenital',surv:'ECG (QT), transit',anti:'-'},
+  {dci:'Prednisone',com:'Cortancyl',cls:'Corticoide',cat:'Corticoides',ind:'Inflammation, auto-immun, allergie',voie:'PO',ei:'Hyperglycemie, prise poids, osteoporose, UGD, immunodepression',ci:'Infection non controlee',surv:'Glycemie, TA, poids, iono. JAMAIS arret brutal.',anti:'-'},
+  {dci:'Ciclosporine',com:'Neoral',cls:'Anticalcineurine',cat:'Immunosuppresseurs',ind:'Prevention rejet greffe',voie:'PO, IV',ei:'Nephrotoxicite, HTA, hirsutisme',ci:'IR severe, hyperK+',surv:'Taux residuels T0, creatinine, iono, PA',anti:'-'},
+  {dci:'Tacrolimus',com:'Prograf',cls:'Anticalcineurine',cat:'Immunosuppresseurs',ind:'Prevention rejet greffe',voie:'PO, IV',ei:'Nephrotoxicite, diabete, neurotoxicite',ci:'Allergie, grossesse',surv:'Taux residuels T0, creatinine, glycemie',anti:'-'},
+  {dci:'Cyclophosphamide',com:'Endoxan',cls:'Alkylant',cat:'Anticancereux',ind:'Cancers, maladies auto-immunes',voie:'PO, IV',ei:'Aplasie, nausees, cystite hemorragique',ci:'Infection severe, insuff. medullaire',surv:'NFS (PNN>1500), diurese, Mesna, DASRI',anti:'-'},
+  {dci:'Atorvastatine',com:'Tahor',cls:'Statine',cat:'Hypolipemiants',ind:'Hypercholesterolemie',voie:'PO (soir)',ei:'Myalgies, rhabdomyolyse, hepatotox.',ci:'IH severe, myopathie, grossesse',surv:'CPK si douleurs musculaires, bilan hepatique',anti:'-'},
+  {dci:'Amiodarone',com:'Cordarone',cls:'Antiarythmique classe III',cat:'Antiarythmiques',ind:'FA, flutter, troubles rythme ventric.',voie:'PO, IV',ei:'Dysthyroidie, fibrose pulm., photosensibilite, QT long',ci:'Dysthyroidie, BAV 2-3, QT long',surv:'TSH /6 mois, bilan hepatique, radio thorax, ECG',anti:'-'},
+  {dci:'Digoxine',com:'Digoxine',cls:'Digitalique',cat:'Antiarythmiques',ind:'IC + FA',voie:'PO, IV',ei:'Bradycardie, nausees, tr. visuels, arythmie',ci:'BAV 2-3, hypoK+',surv:'Digoxinemie 0.5-1 ng/mL, kaliemie +++, FC, ECG',anti:'DIGIBIND'},
+  {dci:'Clozapine',com:'Leponex',cls:'NLP atypique (resistant)',cat:'Psychotropes',ind:'Schizophrenie resistante',voie:'PO',ei:'AGRANULOCYTOSE +++, prise poids, sedation, constipation',ci:'ATCD agranulocytose, epilepsie non controlee',surv:'NFS obligatoire (hebdo 18 sem puis mensuel). Constipation +++',anti:'-'},
+  {dci:'Quetiapine',com:'Xeroquel',cls:'NLP atypique',cat:'Psychotropes',ind:'Schizophrenie, tr. bipolaire, agitation PA',voie:'PO',ei:'Sedation +++, prise poids, hypotension orth.',ci:'Allergie',surv:'Glycemie, poids, PA couche/debout. Tres utilise en gerontopsy.',anti:'-'},
+  {dci:'Aripiprazole',com:'Abilify',cls:'NLP atypique (agoniste partiel D2)',cat:'Psychotropes',ind:'Schizophrenie, tr. bipolaire',voie:'PO, IM',ei:'Akathisie, insomnie, nausees',ci:'Allergie',surv:'Akathisie, poids, glycemie',anti:'-'},
+  {dci:'Paroxetine',com:'Deroxat',cls:'ISRS',cat:'Psychotropes',ind:'Depression, anxiete, TOC',voie:'PO',ei:'Nausees, prise poids, tr. sexuels, hypoNa+ chez PA',ci:'Association IMAO',surv:'Risque suicidaire debut, hypoNa+ chez PA',anti:'-'},
+  {dci:'Citalopram',com:'Seropram',cls:'ISRS',cat:'Psychotropes',ind:'Depression (reference PA)',voie:'PO',ei:'Nausees, cephalees, QT long dose-dependant',ci:'IMAO, QT long',surv:'ECG (QT) surtout chez PA. Max 20 mg/j chez > 65 ans.',anti:'-'},
+  {dci:'Mirtazapine',com:'Norset',cls:'Antidepresseur NaSSA',cat:'Psychotropes',ind:'Depression PA, insomnie, anorexie',voie:'PO (soir)',ei:'Sedation +++, prise poids, augmentation appetit',ci:'Association IMAO',surv:'Poids, sedation. Utile si PA denutri/insomniaque.',anti:'-'},
+  {dci:'Duloxetine',com:'Cymbalta',cls:'IRSNA',cat:'Psychotropes',ind:'Depression, douleurs neuropathiques',voie:'PO',ei:'Nausees, cephalees, HTA, sueurs',ci:'IMAO, IH severe, IR severe',surv:'PA, fonction renale/hepatique',anti:'-'},
+  {dci:'Clomipramine',com:'Anafranil',cls:'Antidepresseur tricyclique',cat:'Psychotropes',ind:'Depression severe, TOC',voie:'PO, IV',ei:'Effets anticholinergiques +++, sedation, hypotension orth., QT long',ci:'IDM recent, glaucome, adenome prostate, IMAO',surv:'ECG, PA, transit, globe vesical. EVITER CHEZ PA.',anti:'-'},
+  {dci:'Lorazepam',com:'Temesta',cls:'BZD demi-vie courte',cat:'Psychotropes',ind:'Anxiete, insomnie courte duree',voie:'PO',ei:'Sedation, chutes, dependance',ci:'Myasthenie, insuff. resp. severe',surv:'Duree courte, sevrage progressif. Reference chez PA.',anti:'FLUMAZENIL'},
+  {dci:'Oxazepam',com:'Seresta',cls:'BZD demi-vie courte',cat:'Psychotropes',ind:'Anxiete PA (reference)',voie:'PO',ei:'Sedation, chutes',ci:'Myasthenie, insuff. resp. severe',surv:'Pas de metabolite actif -> reference chez PA. Duree courte.',anti:'FLUMAZENIL'},
+  {dci:'Zolpidem',com:'Stilnox',cls:'Hypnotique (apparente BZD)',cat:'Psychotropes',ind:'Insomnie courte duree',voie:'PO',ei:'Somnambulisme, amnesie, dependance, chutes',ci:'Myasthenie, insuff. resp. severe, IH severe',surv:'Duree max 4 semaines. Risque chutes PA +++.',anti:'FLUMAZENIL'},
+  {dci:'Zopiclone',com:'Imovane',cls:'Hypnotique (apparente BZD)',cat:'Psychotropes',ind:'Insomnie courte duree',voie:'PO',ei:'Gout amer, somnolence, dependance',ci:'Myasthenie, insuff. resp. severe',surv:'Duree max 4 semaines. Gout metallique frequent.',anti:'FLUMAZENIL'},
+  {dci:'Hydroxyzine',com:'Atarax',cls:'Anxiolytique antihistaminique',cat:'Psychotropes',ind:'Anxiete (alternative BZD)',voie:'PO',ei:'Sedation, effets anticholinergiques, QT long',ci:'QT long, glaucome, adenome prostate, PA > 65 ans (precaution)',surv:'ECG si PA. Prudence chez PA (effets anticholinergiques).',anti:'-'},
+  {dci:'Melatonine',com:'Circadin',cls:'Hormone (regulateur circadien)',cat:'Psychotropes',ind:'Troubles du sommeil PA',voie:'PO',ei:'Cephalees, somnolence diurne',ci:'IH severe, maladies auto-immunes (precaution)',surv:'Peu d\'EI. Alternative aux hypnotiques chez PA.',anti:'-'},
+  {dci:'Donepezil',com:'Aricept',cls:'Anticholinesterasique',cat:'Gerontopsychiatrie',ind:'Alzheimer leger a modere',voie:'PO',ei:'Nausees, diarrhee, bradycardie, insomnie',ci:'BAV, asthme severe, UGD evolutif',surv:'FC, ECG, signes digestifs, MMSE de suivi',anti:'-'},
+  {dci:'Memantine',com:'Ebixa',cls:'Antagoniste NMDA',cat:'Gerontopsychiatrie',ind:'Alzheimer modere a severe',voie:'PO',ei:'Vertiges, cephalees, confusion, constipation',ci:'IR severe, epilepsie',surv:'Fonction renale, tolerance neurologique',anti:'-'},
+  {dci:'Rivastigmine',com:'Exelon',cls:'Anticholinesterasique',cat:'Gerontopsychiatrie',ind:'Alzheimer, demence Parkinson',voie:'PO, Patch',ei:'Nausees, vomissements, bradycardie, perte poids',ci:'BAV, asthme severe, UGD',surv:'FC, poids, signes digestifs. Patch : rotation sites.',anti:'-'},
+  {dci:'Tropatepine',com:'Lepticur',cls:'Anticholinergique correcteur',cat:'Psychotropes',ind:'Correction des SEP des NLP',voie:'PO',ei:'Secheresse buccale, constipation, retention urinaire, confusion',ci:'Glaucome, adenome prostate, demence',surv:'EVITER CHEZ PA (effets anticholinergiques). Transit, globe vesical.',anti:'-'},
+];
+
+const MED_CATEGORIES = [...new Set(MEDS.map(m => m.cat))];
+
+function initMeds() {
+  const filters = document.getElementById('medFilters');
+  filters.innerHTML = '<span class="pill active" onclick="filterMedsCat(this,\'all\')">Tous</span>' +
+    MED_CATEGORIES.map(c => `<span class="pill" onclick="filterMedsCat(this,'${c}')">${c}</span>`).join('');
+  renderMeds(MEDS);
+}
+
+let currentMedCat = 'all';
+function filterMedsCat(el, cat) {
+  document.querySelectorAll('#medFilters .pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  currentMedCat = cat;
+  filterMeds();
+}
+
+function filterMeds() {
+  const q = document.getElementById('medSearch').value.toLowerCase();
+  let filtered = MEDS;
+  if (currentMedCat !== 'all') filtered = filtered.filter(m => m.cat === currentMedCat);
+  if (q) filtered = filtered.filter(m => Object.values(m).some(v => v.toLowerCase().includes(q)));
+  renderMeds(filtered);
+}
+
+function renderMeds(meds) {
+  document.getElementById('medBody').innerHTML = meds.map(m => `
+    <tr><td class="dci">${m.dci}</td><td>${m.com}</td><td>${m.cls}</td><td>${m.ind}</td><td>${m.voie}</td><td>${m.ei}</td><td>${m.ci}</td><td>${m.surv}</td><td>${m.anti}</td></tr>
+  `).join('');
+}
+
+// ========== ANTIDOTES ==========
+const ANTIDOTES = [
+  {med:'Morphine / Opioides',anti:'NALOXONE',com:'Narcan',voie:'IV, IM, SC',delai:'1-2 min',rem:'Titration 0.04 mg. Duree < morphine = re-injection. Surveiller FR.'},
+  {med:'Benzodiazepines',anti:'FLUMAZENIL',com:'Anexate',voie:'IV lente',delai:'1-2 min',rem:'Bolus 0.2 mg /60 sec. Risque convulsions si epileptique. Resedation possible.'},
+  {med:'AVK (hemorragie)',anti:'VITAMINE K + PPSB',com:'Kanion + Octaplex',voie:'PO, IV',delai:'Vit K: 6-12h\nPPSB: immediat',rem:'Vit K seule si INR eleve sans hemorragie. PPSB si hemorragie grave.'},
+  {med:'HNF (Heparine)',anti:'PROTAMINE',com:'Protamine',voie:'IV lente',delai:'5 min',rem:'1 mg neutralise 100 UI HNF. Allergie possible (poisson). Injection lente.'},
+  {med:'Paracetamol (surdosage)',anti:'N-ACETYLCYSTEINE',com:'Fluimucil',voie:'IV, PO',delai:'< 8h',rem:'Nomogramme de Prescott. Bilan hepatique, TP, facteur V.'},
+  {med:'Digitaliques (Digoxine)',anti:'Anticorps anti-digoxine',com:'Digibind',voie:'IV',delai:'30 min',rem:'Intoxication grave (arythmie, hyperK+). Monitoring cardiaque continu.'},
+  {med:'Methotrexate',anti:'ACIDE FOLINIQUE',com:'Lederfoline',voie:'IV, PO',delai:'< 24h',rem:'"Sauvetage folinique". Surveiller methotrexatemie.'},
+  {med:'Insuline (hypoglycemie)',anti:'GLUCAGON',com:'GlucaGen',voie:'SC, IM, IV',delai:'5-10 min',rem:'Patient inconscient. Relais G30% IV. Resucrage PO des que conscient.'},
+  {med:'Betabloquants',anti:'GLUCAGON + ADRENALINE',com:'-',voie:'IV',delai:'1-3 min',rem:'Glucagon inotrope +. Adrenaline si choc. Atropine si bradycardie.'},
+  {med:'Organophosphores',anti:'ATROPINE',com:'Atropine',voie:'IV',delai:'1-2 min',rem:'Doses elevees. Assechement secretions. + Pralidoxime.'},
+  {med:'Curares',anti:'NEOSTIGMINE',com:'Prostigmine',voie:'IV',delai:'1-3 min',rem:'Decurarisation. Toujours avec atropine. Sugammadex pour rocuronium.'},
+  {med:'Fer (surdosage)',anti:'DESFEROXAMINE',com:'Desferal',voie:'IV, IM',delai:'30 min',rem:'Chelateur du fer. Perfusion lente. Urines orange = normal.'},
+  {med:'Methanol / Ethylene glycol',anti:'FOMEPIZOLE',com:'Fomepizole',voie:'IV',delai:'30 min',rem:'Inhibe alcool deshydrogenase. Alternative : ethanol IV.'},
+];
+
+function initAnti() {
+  document.getElementById('antiBody').innerHTML = ANTIDOTES.map(a => `
+    <tr><td>${a.med}</td><td class="antidote-name">${a.anti}</td><td>${a.com}</td><td>${a.voie}</td><td>${a.delai}</td><td>${a.rem}</td></tr>
+  `).join('');
+}
+
+// ========== FORMULAS REFERENCE ==========
+const FORMULAS = [
+  {name:'Debit en gouttes/min',expr:'Debit (gttes/min) = (Volume en mL x Facteur) / Temps en min',units:'gouttes/min',example:'500 mL en 4h : (500 x 20) / 240 = 41.6 -> 42 gttes/min',tip:'Facteurs : Standard = 20, Sang = 15, Pediatrique (micro-gouttes) = 60'},
+  {name:'Debit en mL/h (pompe)',expr:'Debit (mL/h) = Volume (mL) / Temps (h)',units:'mL/h',example:'1000 mL en 8h : 1000 / 8 = 125 mL/h',tip:'Utilise avec les pompes volumetriques. Pas de facteur de gouttes.'},
+  {name:'Dose en fonction du poids',expr:'Dose = Posologie (mg/kg) x Poids (kg)',units:'mg',example:'Paracetamol 15 mg/kg, patient 70 kg : 15 x 70 = 1050 mg',tip:'Toujours verifier la dose maximale (ex : paracetamol max 4g/jour).'},
+  {name:'Volume a prelever (dilution)',expr:'Volume = Dose prescrite / Concentration',units:'mL',example:'Prescription 800 mg, flacon 1g/10mL (100 mg/mL) : 800/100 = 8 mL',tip:'Attention : calculer la concentration APRES reconstitution.'},
+  {name:'Dilution C1V1 = C2V2',expr:'C1 x V1 = C2 x V2',units:'variable',example:'Diluer 50 mg dans 500 mL -> C = 50/500 = 0.1 mg/mL',tip:'C1 = concentration initiale, V1 = volume initial, C2 = concentration finale, V2 = volume final.'},
+  {name:'Debit PSE (pousse-seringue)',expr:'Debit (mL/h) = Dose horaire (mg/h) / Concentration seringue (mg/mL)',units:'mL/h',example:'Morphine 2 mg/h, seringue 50 mg/50 mL (1 mg/mL) : 2/1 = 2 mL/h',tip:'Pour les mcg/kg/min : convertir d\'abord en mg/h. Attention aux unites !'},
+  {name:'Duree de perfusion',expr:'Duree (h) = Volume (mL) / Debit (mL/h)',units:'heures',example:'500 mL a 125 mL/h : 500/125 = 4h',tip:'Pour convertir decimales en minutes : partie decimale x 60.'},
+  {name:'Regle de trois',expr:'a -> b, donc x -> y => y = (b x x) / a',units:'variable',example:'1 cp = 500 mg, donc x cp = 1500 mg => x = (1 x 1500)/500 = 3 cp',tip:'Toujours poser le tableau de correspondance. Verifier l\'homogeneite des unites.'},
+  {name:'IMC',expr:'IMC = Poids (kg) / Taille (m)^2',units:'kg/m2',example:'80 kg, 1.75 m : 80 / (1.75 x 1.75) = 26.1 kg/m2',tip:'<18.5 maigreur | 18.5-24.9 normal | 25-29.9 surpoids | >=30 obesite'},
+  {name:'Conversions essentielles',expr:'1 g = 1000 mg = 1 000 000 mcg | 1 L = 1000 mL | 1 mL = 20 gttes',units:'-',example:'2.5 g = 2500 mg | 750 mcg = 0.75 mg | 500 mL = 0.5 L',tip:'Insuline : 100 UI/mL (standard). Pour convertir % en mg/mL : 1% = 10 mg/mL.'},
+];
+
+function initFormulas() {
+  document.getElementById('formulasArea').innerHTML = FORMULAS.map(f => `
+    <div class="formula-card">
+      <h4>${f.name}</h4>
+      <div class="formula-expr">${f.expr}</div>
+      <div><strong>Unite :</strong> ${f.units}</div>
+      <div class="example"><strong>Exemple :</strong> ${f.example}</div>
+      <div class="piege"><strong>Piege / Astuce :</strong> ${f.tip}</div>
+    </div>
+  `).join('');
+}
+
+// ========== QUIZ PHARMACO ==========
+const QUIZ_PHARMACO_BANK = [
+  {q:'Quel est l\'antidote de la morphine ?',opts:['Flumazenil','Naloxone','Protamine','Vitamine K'],correct:1,expl:'Naloxone (Narcan) est l\'antidote specifique des opioides.'},
+  {q:'Quel est l\'effet indesirable majeur des IEC ?',opts:['Bradycardie','Toux seche','Diarrhee','Alopecie'],correct:1,expl:'La toux seche est l\'effet de classe des IEC (accumulation de bradykinine).'},
+  {q:'Quelle est la CI absolue du valproate de sodium ?',opts:['Insuffisance renale','Femme en age de procreer','HTA','Diabete'],correct:1,expl:'Le valproate est teratogene : CI absolue chez la femme en age de procreer.'},
+  {q:'Quel medicament necessite un arret 48h avant injection de produit de contraste iode ?',opts:['Ramipril','Metformine','Warfarine','Digoxine'],correct:1,expl:'La metformine doit etre arretee 48h avant (risque d\'acidose lactique).'},
+  {q:'L\'INR cible sous AVK est generalement de :',opts:['1-1.5','2-3','3-4','4-5'],correct:1,expl:'INR cible AVK = 2-3 (sauf prothese mecanique : 3-4.5).'},
+  {q:'Quel est le risque principal de l\'hypokaliemie sous digitaliques ?',opts:['Nephrotoxicite','Toxicite digitalique majoree','Hepatotoxicite','Bronchospasme'],correct:1,expl:'L\'hypokaliemie potentialise la toxicite de la digoxine (arythmies).'},
+  {q:'Quel signe impose une NFS en urgence sous carbimazole ?',opts:['Oedemes','Fievre + angine','Diarrhee','Tremblements'],correct:1,expl:'Fievre + angine sous ATS = suspicion d\'agranulocytose -> NFS en urgence.'},
+  {q:'Quel est l\'antidote du paracetamol ?',opts:['Naloxone','N-Acetylcysteine','Flumazenil','Vitamine K'],correct:1,expl:'La N-Acetylcysteine (Fluimucil) est l\'antidote du paracetamol. Efficacite max si < 8h.'},
+  {q:'FR minimale acceptable sous morphine ?',opts:['8/min','10/min','12/min','14/min'],correct:1,expl:'FR >= 10/min. En dessous : stopper la morphine, alerter le medecin, Naloxone a proximite.'},
+  {q:'Quelle classe de medicaments est CI dans l\'asthme ?',opts:['IEC','Betabloquants','Statines','IPP'],correct:1,expl:'Les betabloquants sont CI dans l\'asthme (risque de bronchospasme).'},
+  {q:'Duree max de prescription des benzodiazepines anxiolytiques ?',opts:['4 semaines','12 semaines','6 mois','1 an'],correct:1,expl:'BZD anxiolytiques : max 12 semaines. Sevrage progressif obligatoire.'},
+  {q:'Sous corticoides, l\'arret doit etre :',opts:['Immediat','Progressif (decroissance)','Alterne 1 jour/2','Selon la glycemie'],correct:1,expl:'JAMAIS d\'arret brutal (risque d\'insuffisance surrenalienne). Decroissance progressive.'},
+  {q:'Quel antibiotique a un effet antabuse avec l\'alcool ?',opts:['Amoxicilline','Metronidazole','Ceftriaxone','Vancomycine'],correct:1,expl:'Le metronidazole (Flagyl) provoque un effet antabuse avec l\'alcool.'},
+  {q:'Quel est le SNM (syndrome neuroleptique malin) ?',opts:['Nausees + vomissements','Hyperthermie + rigidite + confusion','Bradycardie + hypotension','Eruption cutanee + fievre'],correct:1,expl:'SNM = hyperthermie + rigidite musculaire + confusion = URGENCE VITALE.'},
+  {q:'Quel est l\'antidote de la digoxine ?',opts:['Protamine','Digibind','Naloxone','Glucagon'],correct:1,expl:'Les anticorps anti-digoxine (Digibind) sont l\'antidote specifique.'},
+  {q:'Les aminosides necessitent la surveillance de :',opts:['INR','Pic et residuel + creatinine','HbA1c','TSH'],correct:1,expl:'Aminosides : dosage pic/residuel + creatinine (nephrotoxicite + ototoxicite).'},
+  {q:'Quel medicament est un inducteur enzymatique ?',opts:['Valproate','Carbamazepine','Lithium','Sertraline'],correct:1,expl:'La carbamazepine est un puissant inducteur enzymatique (diminue l\'effet de la pilule, AVK, ciclosporine...).'},
+  {q:'La levothyroxine se prend :',opts:['Pendant le repas','A jeun, 30 min avant le repas','Le soir au coucher','Avec du lait'],correct:1,expl:'A jeun, 30 min avant le petit-dejeuner. Espacer fer/calcium de 2h, IPP de 4h.'},
+  {q:'Les statines se prennent de preference :',opts:['Le matin','A midi','Le soir','A n\'importe quelle heure'],correct:2,expl:'Le soir : la synthese hepatique du cholesterol est maximale la nuit.'},
+  {q:'Quel signe impose l\'arret de l\'heparine ?',opts:['Nausees','Chute des plaquettes (TIH)','Constipation','Toux'],correct:1,expl:'TIH = chute plaquettes + thrombose -> arret immediat de l\'heparine.'},
+  {q:'Les 5B de l\'administration sont :',opts:['Bon patient, Bon med, Bonne dose, Bonne voie, Bon moment','Bon lit, Bon med, Bonne dose, Bon patient, Bonne heure','Bon med, Bonne dose, Bon patient, Bon dossier, Bonne voie','Bon patient, Bon med, Bon dosage, Bonne heure, Bon lit'],correct:0,expl:'5B : Bon patient, Bon medicament, Bonne dose, Bonne voie, Bon moment.'},
+  {q:'Quel est l\'effet principal des ISRS ?',opts:['Blocage dopaminergique','Inhibition recapture serotonine','Blocage canaux calciques','Inhibition pompe a protons'],correct:1,expl:'Les ISRS inhibent selectivement la recapture de la serotonine dans la fente synaptique.'},
+  {q:'Quel risque a la mise en route d\'un antidepresseur ?',opts:['Dependance immediate','Levee d\'inhibition (risque suicidaire)','Prise de poids de 10 kg','Hepatite fulminante'],correct:1,expl:'En debut de traitement AD, risque de levee d\'inhibition -> surveillance du risque suicidaire.'},
+  {q:'L\'amiodarone necessite la surveillance de :',opts:['Glycemie + HbA1c','TSH + bilan hepatique + ECG + radio thorax','INR + plaquettes','Lithiemie + creatinine'],correct:1,expl:'Amiodarone : TSH /6 mois, bilan hepatique, radio thorax /an, ECG (QT), examen ophtalmo.'},
+  {q:'Quelle est la voie d\'injection de l\'enoxaparine (Lovenox) ?',opts:['IV','IM','SC','PO'],correct:2,expl:'Les HBPM (Lovenox) s\'injectent en SC. Jamais en IM (risque d\'hematome).'},
+  {q:'Un patient sous AVK saigne. Que donner en urgence ?',opts:['Protamine','Vitamine K + PPSB','Naloxone','Flumazenil'],correct:1,expl:'Hemorragie sous AVK : Vitamine K + PPSB (complexe prothrombinique) en urgence.'},
+  {q:'Quel medicament a une marge therapeutique etroite parmi ceux-ci ?',opts:['Paracetamol','Amoxicilline','Lithium','Ibuprofene'],correct:2,expl:'Le lithium a une marge therapeutique tres etroite (0.5-1.2 mEq/L). Dosages reguliers obligatoires.'},
+  {q:'L\'extravasation d\'un cytotoxique impose de :',opts:['Augmenter le debit','Stopper immediatement la perfusion','Changer de bras et continuer','Appeler la pharmacie'],correct:1,expl:'Extravasation = URGENCE : stopper la perfusion, laisser l\'aiguille en place, aspirer, alerter.'},
+  {q:'Quel est l\'effet indesirable principal des sulfamides hypoglycemiants ?',opts:['Diarrhee','Hypoglycemie','Toux seche','Rash cutane'],correct:1,expl:'Risque d\'HYPOGLYCEMIE +++ avec les sulfamides (Gliclazide/Diamicron).'},
+  {q:'Les IPP se prennent :',opts:['Apres le repas','A jeun, 30 min avant le repas','Au coucher','Avec du lait'],correct:1,expl:'Les IPP (Omeprazole) se prennent a jeun, 30 min avant le repas pour une efficacite maximale.'},
+  {q:'Quel est le risque principal de la spironolactone ?',opts:['Hypokaliemie','Hyperkaliemie','Hypocalcemie','Hypernatremie'],correct:1,expl:'La spironolactone est un epargneur de potassium : risque d\'hyperkaliemie.'},
+  {q:'Que signifie SEP en pharmacologie des neuroleptiques ?',opts:['Syndrome d\'epuisement psychique','Syndrome extra-pyramidal','Sclerose en plaques','Syndrome d\'excitation paradoxale'],correct:1,expl:'SEP = syndrome extra-pyramidal : rigidite, tremblements, akathisie, dyskinesies.'},
+  {q:'Quel est l\'antidote des benzodiazepines ?',opts:['Naloxone','Protamine','Flumazenil','Atropine'],correct:2,expl:'Le flumazenil (Anexate) est l\'antagoniste specifique des benzodiazepines.'},
+  {q:'Les corticoides au long cours necessitent un regime :',opts:['Hyperproteine','Hyposode, pauvre en sucres rapides','Riche en graisses','Sans fibres'],correct:1,expl:'Corticoides : regime hyposode (retention hydrosodee) et pauvre en sucres rapides (hyperglycemie).'},
+  {q:'Quelle surveillance est specifique aux HBPM ?',opts:['INR','TCA','Plaquettes 2 fois par semaine','Lithiemie'],correct:2,expl:'HBPM : surveillance des plaquettes 2x/semaine (risque de TIH).'},
+  // GERONTOPSYCHIATRIE
+  {q:'Quelle BZD est la reference chez la personne agee ?',opts:['Diazepam (Valium)','Oxazepam (Seresta)','Alprazolam (Xanax)','Bromazepam (Lexomil)'],correct:1,expl:'Oxazepam (Seresta) : demi-vie courte, pas de metabolite actif -> reference chez la PA.'},
+  {q:'Quel est le principe de prescription chez la PA ?',opts:['Start high, go fast','Start low, go slow','Dose standard pour tous','Doses doublees si > 75 ans'],correct:1,expl:'"Start low, go slow" : debuter a dose faible, augmenter lentement, evaluer regulierement.'},
+  {q:'Quel est le risque principal des NLP chez la PA ?',opts:['Hepatotoxicite','Chutes + risque AVC','Nephrotoxicite','Alopecie'],correct:1,expl:'NLP chez PA : risque majore de chutes (sedation, hypotension) et d\'AVC (surtout chez le dement).'},
+  {q:'Quel medicament est indique dans l\'Alzheimer leger a modere ?',opts:['Memantine','Donepezil','Haloperidol','Lithium'],correct:1,expl:'Donepezil (Aricept) = anticholinesterasique, indique dans Alzheimer leger a modere.'},
+  {q:'La memantine (Ebixa) est indiquee dans :',opts:['Alzheimer leger','Alzheimer modere a severe','Depression du PA','Epilepsie du PA'],correct:1,expl:'Memantine = antagoniste NMDA, indique dans les formes moderees a severes d\'Alzheimer.'},
+  {q:'Comment differencier un delirium d\'une demence ?',opts:['Le delirium est progressif','Le delirium est aigu et reversible','Le delirium dure des annees','Le delirium n\'a pas d\'hallucinations'],correct:1,expl:'Delirium = debut brutal, fluctuant, reversible si cause traitee. Demence = progressif, irreversible.'},
+  {q:'Pourquoi eviter les anticholinergiques chez la PA ?',opts:['Risque d\'hypoglycemie','Confusion, retention urinaire, constipation','Risque d\'hemorragie','Toxicite pulmonaire'],correct:1,expl:'Anticholinergiques chez PA : confusion, retention urinaire, constipation, secheresse buccale, glaucome.'},
+  {q:'Quel ISRS est prefere chez la PA pour la depression ?',opts:['Fluoxetine','Citalopram ou Sertraline','Paroxetine','Fluvoxamine'],correct:1,expl:'Citalopram (max 20 mg/j > 65 ans, attention QT) ou Sertraline. Peu d\'interactions.'},
+  {q:'La mirtazapine (Norset) est utile chez la PA car :',opts:['Elle est stimulante','Elle est sedative et orexigene','Elle n\'a aucun EI','Elle se donne en IV'],correct:1,expl:'Mirtazapine : sedation (prise le soir) + augmentation appetit. Utile si PA insomniaque et/ou denutri.'},
+  {q:'Quel medicament necessite une NFS hebdomadaire pendant 18 semaines ?',opts:['Haloperidol','Clozapine','Risperidone','Quetiapine'],correct:1,expl:'Clozapine (Leponex) : NFS hebdomadaire pendant 18 semaines puis mensuelle (risque agranulocytose).'},
+  {q:'Le MMSE est un test de :',opts:['Depression','Fonctions cognitives','Agitation','Douleur'],correct:1,expl:'MMSE = Mini Mental State Examination. Score /30. < 24 = trouble cognitif.'},
+  {q:'Quelle echelle evalue la depression chez un patient dement ?',opts:['GDS','Cornell','MMSE','NPI'],correct:1,expl:'L\'echelle de Cornell est specifiquement concue pour evaluer la depression chez le patient dement.'},
+  {q:'Quel est l\'EI cardiaque a surveiller sous anticholinesterasiques ?',opts:['Tachycardie','Bradycardie','HTA','Arythmie ventriculaire'],correct:1,expl:'Les anticholinesterasiques augmentent le tonus vagal -> risque de bradycardie. Surveiller FC et ECG.'},
+  {q:'Quelle demence contre-indique formellement les NLP typiques ?',opts:['Alzheimer','Vasculaire','Corps de Lewy','Fronto-temporale'],correct:2,expl:'Demence a corps de Lewy : CI absolue des NLP typiques (risque de syndrome malin, aggravation majeure).'},
+  {q:'Les criteres STOPP-START concernent :',opts:['La prescription chez l\'enfant','La prescription inappropriee chez la PA','Les antibiotiques','La chimio'],correct:1,expl:'STOPP = medicaments a arreter chez > 65 ans. START = medicaments a envisager.'},
+  {q:'Chez la PA, pourquoi les BZD longue action sont-elles dangereuses ?',opts:['Risque d\'allergie','Accumulation -> sedation prolongee -> chutes','Hepatotoxicite','Nephrotoxicite'],correct:1,expl:'Les BZD longue duree action s\'accumulent chez la PA -> sedation, chutes, fractures.'},
+  {q:'Le CAM (Confusion Assessment Method) evalue :',opts:['La depression','Le delirium (confusion aigue)','La demence','L\'anxiete'],correct:1,expl:'CAM = outil diagnostique du delirium. 4 criteres : debut aigu, inattention, pensee desorganisee, niveau conscience altere.'},
+];
+
+let quizPharmacoState = { questions: [], current: 0, score: 0, answered: [] };
+
+function startQuizPharmaco() {
+  const shuffled = [...QUIZ_PHARMACO_BANK].sort(() => Math.random() - 0.5).slice(0, 10);
+  quizPharmacoState = { questions: shuffled, current: 0, score: 0, answered: [] };
+  renderQuizPharmacoQ();
+}
+
+function renderQuizPharmacoQ() {
+  const area = document.getElementById('quizPharmacoArea');
+  if (quizPharmacoState.current >= quizPharmacoState.questions.length) { renderQuizPharmacoResults(); return; }
+  const q = quizPharmacoState.questions[quizPharmacoState.current];
+  const pct = quizPharmacoState.current / quizPharmacoState.questions.length * 100;
+  area.innerHTML = `
+    <div class="progress-bar"><div class="fill" style="width:${pct}%"></div></div>
+    <div class="counter">Question ${quizPharmacoState.current+1} / ${quizPharmacoState.questions.length} | Score : ${quizPharmacoState.score}</div>
+    <div class="quiz-question"><h4>${q.q}</h4>
+      ${q.opts.map((o,i) => `<button class="quiz-option" onclick="answerPharmaco(${i})" id="popt${i}">${o}</button>`).join('')}
+      <div class="quiz-explanation" id="pexpl">${q.expl}</div>
+    </div>`;
+}
+
+function answerPharmaco(idx) {
+  const q = quizPharmacoState.questions[quizPharmacoState.current];
+  const correct = idx === q.correct;
+  if (correct) quizPharmacoState.score++;
+  quizPharmacoState.answered.push({ q: q.q, chosen: idx, correct: q.correct, isCorrect: correct });
+  document.getElementById('popt'+idx).classList.add(correct ? 'correct' : 'wrong');
+  document.getElementById('popt'+q.correct).classList.add('correct');
+  document.querySelectorAll('#quizPharmacoArea .quiz-option').forEach(o => o.classList.add('disabled'));
+  document.getElementById('pexpl').style.display = 'block';
+  setTimeout(() => { quizPharmacoState.current++; renderQuizPharmacoQ(); }, 2500);
+}
+
+function renderQuizPharmacoResults() {
+  const s = quizPharmacoState;
+  const pct = Math.round(s.score / s.questions.length * 100);
+  const color = pct >= 80 ? 'var(--success)' : pct >= 50 ? 'var(--warn)' : 'var(--danger)';
+  document.getElementById('quizPharmacoArea').innerHTML = `
+    <div class="quiz-score"><div class="score-num" style="color:${color}">${s.score} / ${s.questions.length}</div>
+    <div style="font-size:1.2em;margin:8px 0;">${pct}%</div>
+    <div style="color:var(--text-light);margin-bottom:16px;">${pct >= 80 ? 'Excellent !' : pct >= 50 ? 'Pas mal, continuez !' : 'A reviser !'}</div>
+    <button class="btn btn-primary" onclick="startQuizPharmaco()">Recommencer</button></div>
+    <div style="margin-top:16px;"><h3 style="margin-bottom:12px;">Corrections :</h3>
+    ${s.answered.map((a,i) => `<div class="card" style="border-left:4px solid ${a.isCorrect ? 'var(--success)' : 'var(--danger)'}"><strong>Q${i+1}.</strong> ${a.q}<br><span style="color:${a.isCorrect ? 'var(--success)' : 'var(--danger)'};">${a.isCorrect ? 'Correct' : 'Incorrect - Reponse : ' + s.questions[i].opts[a.correct]}</span><br><span style="font-size:0.85em;color:var(--text-light)">${s.questions[i].expl}</span></div>`).join('')}
+    </div>`;
+}
+
+// ========== QUIZ CALCULS ==========
+const QUIZ_CALC_BANK = [
+  {q:'500 mL de NaCl 0.9% en 4h, perfuseur standard. Debit en gttes/min ?',opts:['42 gttes/min','32 gttes/min','50 gttes/min','25 gttes/min'],correct:0,expl:'(500 x 20) / 240 = 41.6, arrondi a 42 gttes/min. Raccourci : 500/(3x4) = 42.'},
+  {q:'1000 mL de glucose 5% en 8h, perfuseur standard. Debit en gttes/min ?',opts:['42 gttes/min','56 gttes/min','33 gttes/min','62 gttes/min'],correct:0,expl:'(1000 x 20) / 480 = 41.6 -> 42 gttes/min.'},
+  {q:'250 mL de Ringer Lactate en 2h. Debit en gttes/min ?',opts:['42 gttes/min','21 gttes/min','63 gttes/min','84 gttes/min'],correct:0,expl:'(250 x 20) / 120 = 41.6 -> 42 gttes/min.'},
+  {q:'500 mL de concentre globulaire en 3h (perfuseur sang). Debit ?',opts:['42 gttes/min','56 gttes/min','28 gttes/min','36 gttes/min'],correct:0,expl:'Sang = 15 gttes/mL. (500 x 15) / 180 = 41.6 -> 42 gttes/min.'},
+  {q:'100 mL de serum physiologique en 1h chez un nourrisson (perfuseur pediatrique). Debit ?',opts:['100 micro-gttes/min','60 micro-gttes/min','33 micro-gttes/min','20 micro-gttes/min'],correct:0,expl:'Pediatrie = 60 micro-gttes/mL. (100 x 60) / 60 = 100 micro-gttes/min. Ou : mL/h = micro-gttes/min = 100.'},
+  {q:'1000 mL en 8h a la pompe. Debit en mL/h ?',opts:['125 mL/h','100 mL/h','150 mL/h','83 mL/h'],correct:0,expl:'Debit = 1000 / 8 = 125 mL/h.'},
+  {q:'500 mL en 6h sur pompe volumetrique. Debit en mL/h ?',opts:['83 mL/h','100 mL/h','63 mL/h','42 mL/h'],correct:0,expl:'500 / 6 = 83.3, arrondi a 83 mL/h.'},
+  {q:'250 mL en 30 min sur pompe. Debit en mL/h ?',opts:['500 mL/h','250 mL/h','125 mL/h','750 mL/h'],correct:0,expl:'30 min = 0.5 h. 250 / 0.5 = 500 mL/h. Debit eleve -> verifier la prescription !'},
+  {q:'Prescription : 1.5 g d\'amoxicilline PO. Gelules de 500 mg. Combien ?',opts:['3 gelules','2 gelules','4 gelules','1.5 gelules'],correct:0,expl:'1.5 g = 1500 mg. 1500 / 500 = 3 gelules.'},
+  {q:'Prescription : 2 g de paracetamol. Comprimes de 500 mg. Combien ?',opts:['4 comprimes','3 comprimes','2 comprimes','5 comprimes'],correct:0,expl:'2 g = 2000 mg. 2000 / 500 = 4 comprimes.'},
+  {q:'Sirop : 125 mg / 5 mL. Volume pour 250 mg ?',opts:['10 mL','5 mL','15 mL','20 mL'],correct:0,expl:'Produit en croix : (5 x 250) / 125 = 10 mL.'},
+  {q:'Flacon de ceftriaxone 1 g reconstitue dans 10 mL. Volume pour 800 mg ?',opts:['8 mL','6 mL','10 mL','4 mL'],correct:0,expl:'Concentration = 1000/10 = 100 mg/mL. Volume = 800/100 = 8 mL.'},
+  {q:'Flacon de gentamicine 80 mg / 2 mL. Volume pour 60 mg ?',opts:['1.5 mL','1 mL','2 mL','0.75 mL'],correct:0,expl:'Concentration = 80/2 = 40 mg/mL. Volume = 60/40 = 1.5 mL.'},
+  {q:'Vancomycine 500 mg dans 10 mL. Volume pour 350 mg ?',opts:['7 mL','5 mL','3.5 mL','10 mL'],correct:0,expl:'Concentration = 50 mg/mL. Volume = 350/50 = 7 mL.'},
+  {q:'Patient de 70 kg. Paracetamol 15 mg/kg/prise. Dose par prise ?',opts:['1050 mg','750 mg','1200 mg','1500 mg'],correct:0,expl:'15 x 70 = 1050 mg. Mais max 1000 mg/prise -> arrondir a 1000 mg.'},
+  {q:'Enfant de 22 kg. Amoxicilline 50 mg/kg/jour en 3 prises. Dose par prise ?',opts:['367 mg','550 mg','733 mg','220 mg'],correct:0,expl:'50 x 22 = 1100 mg/jour. 1100 / 3 = 366.6 -> 367 mg/prise.'},
+  {q:'Patient de 85 kg. Gentamicine 3 mg/kg/jour. Dose journaliere ?',opts:['255 mg','170 mg','340 mg','210 mg'],correct:0,expl:'3 x 85 = 255 mg/jour.'},
+  {q:'Convertir 0.25 g en mg :',opts:['250 mg','25 mg','2500 mg','2.5 mg'],correct:0,expl:'0.25 x 1000 = 250 mg.'},
+  {q:'Convertir 500 mcg en mg :',opts:['0.5 mg','5 mg','0.05 mg','50 mg'],correct:0,expl:'500 / 1000 = 0.5 mg.'},
+  {q:'Prescription : 60 UI d\'insuline. Concentration 100 UI/mL. Volume ?',opts:['0.6 mL','6 mL','0.06 mL','60 mL'],correct:0,expl:'Volume = 60 / 100 = 0.6 mL.'},
+  {q:'500 mL a 125 mL/h. Duree de perfusion ?',opts:['4 heures','3 heures','5 heures','6 heures'],correct:0,expl:'Duree = 500 / 125 = 4 heures.'},
+  {q:'1000 mL a 42 gttes/min (perfuseur standard). Duree de perfusion ?',opts:['Environ 8h','Environ 4h','Environ 12h','Environ 6h'],correct:0,expl:'mL/h = (42 x 60)/20 = 126 mL/h. Duree = 1000/126 = 7.9h -> environ 8h.'},
+  {q:'PSE morphine 2 mg/h. Seringue 50 mg / 50 mL. Debit ?',opts:['2 mL/h','1 mL/h','4 mL/h','0.5 mL/h'],correct:0,expl:'Concentration = 50/50 = 1 mg/mL. Debit = 2/1 = 2 mL/h.'},
+  {q:'PSE heparine 1200 UI/h. Seringue 25000 UI / 50 mL. Debit ?',opts:['2.4 mL/h','1.2 mL/h','4.8 mL/h','0.6 mL/h'],correct:0,expl:'Concentration = 25000/50 = 500 UI/mL. Debit = 1200/500 = 2.4 mL/h.'},
+  {q:'Patient de 90 kg, 1.80 m. IMC ?',opts:['27.8 kg/m2','25.0 kg/m2','30.0 kg/m2','22.2 kg/m2'],correct:0,expl:'IMC = 90 / (1.80 x 1.80) = 90 / 3.24 = 27.8 kg/m2 (surpoids).'},
+  {q:'Un debit de 42 gttes/min correspond a combien de mL/h ?',opts:['126 mL/h','42 mL/h','84 mL/h','63 mL/h'],correct:0,expl:'mL/h = (gttes/min x 60) / facteur = (42 x 60) / 20 = 126 mL/h.'},
+  {q:'Convertir 3 L/24h en mL/h :',opts:['125 mL/h','300 mL/h','30 mL/h','75 mL/h'],correct:0,expl:'3 L = 3000 mL. 3000 / 24 = 125 mL/h.'},
+  {q:'250 mL en 30 min, perfuseur standard. Debit en gttes/min ?',opts:['167 gttes/min','125 gttes/min','83 gttes/min','250 gttes/min'],correct:0,expl:'(250 x 20) / 30 = 166.6 -> 167 gttes/min. ATTENTION debit tres eleve, reverifier !'},
+];
+
+let quizCalcState = { questions: [], current: 0, score: 0, answered: [] };
+
+function startQuizCalc() {
+  const shuffled = [...QUIZ_CALC_BANK].sort(() => Math.random() - 0.5).slice(0, 10);
+  quizCalcState = { questions: shuffled, current: 0, score: 0, answered: [] };
+  renderQuizCalcQ();
+}
+
+function renderQuizCalcQ() {
+  const area = document.getElementById('quizCalcArea');
+  if (quizCalcState.current >= quizCalcState.questions.length) { renderQuizCalcResults(); return; }
+  const q = quizCalcState.questions[quizCalcState.current];
+  const pct = quizCalcState.current / quizCalcState.questions.length * 100;
+  area.innerHTML = `
+    <div class="progress-bar"><div class="fill" style="width:${pct}%"></div></div>
+    <div class="counter">Question ${quizCalcState.current+1} / ${quizCalcState.questions.length} | Score : ${quizCalcState.score}</div>
+    <div class="quiz-question"><h4>${q.q}</h4>
+      ${q.opts.map((o,i) => `<button class="quiz-option" onclick="answerCalc(${i})" id="copt${i}">${o}</button>`).join('')}
+      <div class="quiz-explanation" id="cexpl">${q.expl}</div>
+    </div>`;
+}
+
+function answerCalc(idx) {
+  const q = quizCalcState.questions[quizCalcState.current];
+  const correct = idx === q.correct;
+  if (correct) quizCalcState.score++;
+  quizCalcState.answered.push({ q: q.q, chosen: idx, correct: q.correct, isCorrect: correct });
+  document.getElementById('copt'+idx).classList.add(correct ? 'correct' : 'wrong');
+  document.getElementById('copt'+q.correct).classList.add('correct');
+  document.querySelectorAll('#quizCalcArea .quiz-option').forEach(o => o.classList.add('disabled'));
+  document.getElementById('cexpl').style.display = 'block';
+  setTimeout(() => { quizCalcState.current++; renderQuizCalcQ(); }, 2500);
+}
+
+function renderQuizCalcResults() {
+  const s = quizCalcState;
+  const pct = Math.round(s.score / s.questions.length * 100);
+  const color = pct >= 80 ? 'var(--success)' : pct >= 50 ? 'var(--warn)' : 'var(--danger)';
+  document.getElementById('quizCalcArea').innerHTML = `
+    <div class="quiz-score"><div class="score-num" style="color:${color}">${s.score} / ${s.questions.length}</div>
+    <div style="font-size:1.2em;margin:8px 0;">${pct}%</div>
+    <div style="color:var(--text-light);margin-bottom:16px;">${pct >= 80 ? 'Excellent !' : pct >= 50 ? 'Pas mal, continuez !' : 'A reviser !'}</div>
+    <button class="btn btn-primary" onclick="startQuizCalc()">Recommencer</button></div>
+    <div style="margin-top:16px;"><h3 style="margin-bottom:12px;">Corrections :</h3>
+    ${s.answered.map((a,i) => `<div class="card" style="border-left:4px solid ${a.isCorrect ? 'var(--success)' : 'var(--danger)'}"><strong>Q${i+1}.</strong> ${a.q}<br><span style="color:${a.isCorrect ? 'var(--success)' : 'var(--danger)'};">${a.isCorrect ? 'Correct' : 'Incorrect - Reponse : ' + s.questions[i].opts[a.correct]}</span><br><span style="font-size:0.85em;color:var(--text-light)">${s.questions[i].expl}</span></div>`).join('')}
+    </div>`;
+}
+
+// ========== INIT ==========
+initMeds();
+initAnti();
+initFormulas();
+</script>
+</body>
+</html>
